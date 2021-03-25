@@ -1,7 +1,8 @@
 .App {
   text-align: center;
   display: grid;
-  grid: 135px / auto;
+  grid-template-columns: auto;
+  grid-template-rows: 135px auto;
 }
 
 .App-logo {
@@ -15,6 +16,14 @@
   }
 }
 
+.App-layout {
+  display: grid;
+  grid-template-columns: auto 1300px auto;
+  grid-template-rows: auto;
+  -webkit-box-shadow: 0px 3px 15px 0 rgba(0, 0, 0, 0.25);
+  box-shadow: 0px 3px 15px 0 rgba(0, 0, 0, 0.25);
+}
+
 .App-header {
   height: 135px;
   top: 0;
@@ -22,8 +31,6 @@
   right: 0;
   z-index: 50;
   background-color: #FFFFFF;
-  -webkit-box-shadow: 0px 3px 15px 0 rgba(0, 0, 0, 0.25);
-  box-shadow: 0px 3px 15px 0 rgba(0, 0, 0, 0.25);
 }
 
 .App-container {
@@ -115,7 +122,7 @@
 
 .site-content, section {
   display: grid;
-  grid-template-columns: 350px auto;
+  grid-template-columns: 25px auto;
   grid-template-rows: 60px auto;
 }
 
@@ -144,7 +151,7 @@
 
 .agenda-table {
   display: grid;
-  grid-template-columns: 10% 60% 10% 5% 5%;
+  grid-template-columns: 10% 68% 12% 5% 5%;
   max-width: 1384px;
 }
 
@@ -177,8 +184,11 @@
 .agenda-date {
   border: 1px solid grey;
   border-radius: 10px;
+  font-size: 18px;
+  font-weight: 600;
   margin-right: 15px;
-  padding-left: 15px;
+  text-align: center;
+  width: 90%;
 }
 
 .agenda-button {
