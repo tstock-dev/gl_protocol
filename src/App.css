@@ -151,7 +151,7 @@
 
 .agenda-table {
   display: grid;
-  grid-template-columns: 10% 68% 12% 5% 5%;
+  grid-template-columns: 10% 63% 17% 5% 5%;
   max-width: 1384px;
 }
 

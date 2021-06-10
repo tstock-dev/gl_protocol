@@ -19,6 +19,7 @@ const AllTopics = () => {
         state_id
         created
         closed
+        resubmit_date
         assigned_to_member {
           last_name 
           first_name
@@ -35,15 +36,27 @@ const AllTopics = () => {
   
   const listItems = data.topics.map((topic) =>
     <React.Fragment key={topic.id}>
-      <div></div>
+      <div>
+        <DatePicker
+          className="resubmission agenda-date"
+          closeOnScroll={true}
+          dateFormat="dd.MM.yyyy"
+          locale="de"
+          name="startDate"
+          onChange={(date) => setStartDate(date)}
+          selected={Date.parse(topic.resubmit_date)}
+          showWeekNumbers={true}
+          todayButton="Heute"
+        />
+      </div>
       <div className="agenda-topic agenda-item">
           {topic.title}
       </div>
       {topic.assigned_to_member
         ? <div className="responsible agenda-item">{topic.assigned_to_member.last_name}, {topic.assigned_to_member.first_name}</div>
         : <div className="responsible agenda-item"></div> }
-      <button className="doing agenda-button checked"></button>
-      <button className="done agenda-button"></button>
+      <button className={"doing agenda-button" + (topic.state_id === 2 ? " checked" : "")}></button>
+      <button className={"done agenda-button" + (topic.state_id === 4 ? " checked" : "")}></button>
     </React.Fragment>
   );
 
