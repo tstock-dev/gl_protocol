@@ -1,15 +1,11 @@
 import React, { useState } from "react";
 import DatePicker, { registerLocale } from "react-datepicker";
-import { useQuery, gql } from '@apollo/client';
+import { useQuery, useMutation, gql } from '@apollo/client';
 import de from "date-fns/locale/de";
 
 import "react-datepicker/dist/react-datepicker.css";
 
 registerLocale("de", de);
-
-const clickDoing = (topicId) => {
-  console.log(topicId);
-};
 
 const AllTopics = () => {
   const [startDate, setStartDate] = useState(new Date());
@@ -32,6 +28,31 @@ const AllTopics = () => {
     }
     `
   ;
+
+  const TOPICS_SET_STATE = gql`
+    mutation {
+      updateTopicState(id: $id, state_id: $stateId) {
+        id
+      }
+    }
+    `
+  ;
+
+  const clickDoing = (topicId) => {
+    console.log(topicId);
+    setStateInDB(topicId, 2);
+  };
+
+  const setStateInDB = (topicId, theStateId) => {
+    const [topic] = useMutation(TOPICS_SET_STATE, {
+      variables: {
+        id: topicId,
+        stateId: theStateId
+      }
+    });
+    console.log(topic);
+  };
+
 
   const { loading, error, data } = useQuery(TOPICS_QUERY);
     
@@ -64,8 +85,6 @@ const AllTopics = () => {
       <button className={"done agenda-button" + (topic.state_id === 4 ? " checked" : "")}></button>
     </React.Fragment>
   );
-
-
 
   const Separator = <>
                         <div className="agenda-separator" /><div className="agenda-separator" /><div className="agenda-separator" />
