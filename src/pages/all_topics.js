@@ -7,6 +7,10 @@ import "react-datepicker/dist/react-datepicker.css";
 
 registerLocale("de", de);
 
+const clickDoing = (topicId) => {
+  console.log(topicId);
+};
+
 const AllTopics = () => {
   const [startDate, setStartDate] = useState(new Date());
 
@@ -55,10 +59,13 @@ const AllTopics = () => {
       {topic.assigned_to_member
         ? <div className="responsible agenda-item">{topic.assigned_to_member.last_name}, {topic.assigned_to_member.first_name}</div>
         : <div className="responsible agenda-item"></div> }
-      <button className={"doing agenda-button" + (topic.state_id === 2 ? " checked" : "")}></button>
+      <button className={"doing agenda-button" + (topic.state_id === 2 ? " checked" : "")}
+              onClick={() => clickDoing(topic.id)}></button>
       <button className={"done agenda-button" + (topic.state_id === 4 ? " checked" : "")}></button>
     </React.Fragment>
   );
+
+
 
   const Separator = <>
                         <div className="agenda-separator" /><div className="agenda-separator" /><div className="agenda-separator" />
