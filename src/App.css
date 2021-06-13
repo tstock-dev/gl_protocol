@@ -58,15 +58,30 @@
   margin-left: 200px;
 }
 
+.header-user {
+  position: absolute;
+  right: 0px;
+}
+
+.header-user-name {
+  float: left;
+  padding-top: 5px;
+}
+
+.header-user-icon {
+  margin-left: 20px;
+  margin-bottom: 5px;
+}
+
 .meta-nav {
   height: 60px;
-  padding: 20px 0 8px;
+  padding: 15px 0 8px;
   position: relative;
   z-index: 1;
 }
 
 .header-placeholder {
-  height: 40px;
+  height: 45px;
 }
 
 #site-navigation {
