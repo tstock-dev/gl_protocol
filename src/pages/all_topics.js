@@ -30,31 +30,69 @@ const AllTopics = () => {
   ;
 
   const TOPICS_SET_STATE = gql`
-    mutation {
+    mutation updateTopicState($id: ID!, $stateId: Int!) {
       updateTopicState(id: $id, state_id: $stateId) {
         id
-      }
+        state_id
+      } 
     }
     `
   ;
+
+  const TOPICS_SET_RESUBMITION = gql`
+    mutation updateTopicResubmitDate($id: ID!, $resubmit_date: Date!) {
+      updateTopicResubmitDate(id: $id, resubmit_date: $resubmit_date) {
+        id
+        resubmit_date
+      } 
+    }
+    `
+  ;
+
+  // const { loading, error, data, refetch } = useQuery(TOPICS_QUERY);
+  const { loading, error, data } = useQuery(TOPICS_QUERY);
+
+  const [ setTopicState ]        = useMutation(TOPICS_SET_STATE);
+  const [ setTopicResubmitDate ] = useMutation(TOPICS_SET_RESUBMITION);
+
 
   const clickDoing = (topicId) => {
     console.log(topicId);
     setStateInDB(topicId, 2);
   };
 
-  const setStateInDB = (topicId, theStateId) => {
-    const [topic] = useMutation(TOPICS_SET_STATE, {
-      variables: {
-        id: topicId,
-        stateId: theStateId
-      }
-    });
-    console.log(topic);
+  const clickClosed = (topicId) => {
+    console.log(topicId);
+    setStateInDB(topicId, 4);
   };
 
+  const setStateInDB = (topicId, newStateId) => {
+    setTopicState({
+      variables: {
+        id: topicId,
+        stateId: newStateId
+      }
+    });
+  };
 
-  const { loading, error, data } = useQuery(TOPICS_QUERY);
+  const setResubmitDateInDB = (topicId, resubmitDate) => {
+    setTopicResubmitDate({
+      variables: {
+        id: topicId,
+        resubmit_date: resubmitDate
+      }
+    });
+  };
+
+  // const setStateInDB = (topicId, newStateId) => {
+  //   setTopicState({
+  //     variables: {
+  //       id: topicId,
+  //       stateId: newStateId
+  //     },
+  //     onCompleted: refetch,
+  //   });
+  // };
     
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error :(</p>;
@@ -68,7 +106,7 @@ const AllTopics = () => {
           dateFormat="dd.MM.yyyy"
           locale="de"
           name="startDate"
-          onChange={(date) => setStartDate(date)}
+          onChange={(date) => setResubmitDateInDB(topic.id, date)}
           selected={Date.parse(topic.resubmit_date)}
           showWeekNumbers={true}
           todayButton="Heute"
@@ -82,7 +120,8 @@ const AllTopics = () => {
         : <div className="responsible agenda-item"></div> }
       <button className={"doing agenda-button" + (topic.state_id === 2 ? " checked" : "")}
               onClick={() => clickDoing(topic.id)}></button>
-      <button className={"done agenda-button" + (topic.state_id === 4 ? " checked" : "")}></button>
+      <button className={"done agenda-button" + (topic.state_id === 4 ? " checked" : "")}
+              onClick={() => clickClosed(topic.id)}></button>
     </React.Fragment>
   );
 
