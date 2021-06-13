@@ -12,9 +12,17 @@ import LoggedOut from "./images/loggedout.png";
 import LoggedIn from "./images/loggedIn.png";
 import { AUTH_TOKEN } from './constants';
 
+
+
 function App() {
 
   const authToken = localStorage.getItem(AUTH_TOKEN);
+  console.log(authToken);
+
+  const logoutUser = () => {
+    localStorage.removeItem(AUTH_TOKEN);
+    window.location.href = "/";
+  };
 
   return (
     <div className="App">
@@ -43,9 +51,7 @@ function App() {
                               <img alt="logged out" src={LoggedOut} width="40" height="40" ></img>
                             </Link>
                           : <a className="header-user-icon" href="/" title="hier klicken um auzuloggen"
-                                 onClick={() => { localStorage.removeItem(AUTH_TOKEN);
-                                                  Router.push(`/`);
-                                                }}>
+                                 onClick={() => logoutUser() }>
                               <img alt="logged in" src={LoggedIn} width="40" height="40" ></img>
                             </a>
                         }
