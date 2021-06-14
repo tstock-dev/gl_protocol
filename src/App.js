@@ -1,4 +1,6 @@
+import { useState, useEffect } from "react";
 import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
+import jwt from "jwt-decode";
 import "bootstrap/dist/css/bootstrap.css";
 import "./App.css";
 import Home from "./pages/home";
@@ -16,13 +18,22 @@ import { AUTH_TOKEN } from './constants';
 
 function App() {
 
+  const [user, setUser] = useState({});
+
   const authToken = localStorage.getItem(AUTH_TOKEN);
-  console.log(authToken);
 
   const logoutUser = () => {
     localStorage.removeItem(AUTH_TOKEN);
     window.location.href = "/";
   };
+
+  useEffect(() => { 
+    if (authToken != null) {
+      let user = jwt(authToken);
+      console.log(user);
+      setUser(user);
+    }
+  }, [authToken]);
 
   return (
     <div className="App">
@@ -44,7 +55,7 @@ function App() {
                       <div className="header-user">
                         {authToken == null
                           ? <div className="header-user-name">nicht eingeloggt</div>
-                          : <div className="header-user-name">eingeloggt</div>
+                          : <div className="header-user-name">{user.last_name}, {user.first_name}</div>
                         }
                         {authToken == null
                           ? <Link to="/login" className="header-user-icon">
