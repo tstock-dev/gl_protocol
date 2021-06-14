@@ -69,8 +69,21 @@ const TopicsList = ({useAuthtoken}) => {
                                 headers: headersToSend
                            } })
                     .then((queryResult) => {
-                        setData(queryResult.data);
-                        //console.log("topics:", queryResult.data);
+                        // build own json without apollo fields
+                        let newData = {"topics": []};
+                        queryResult.data.topics.forEach((topic) => {
+                            let newTopic = {    "id": topic.id,
+                                                "created": topic.created,
+                                                "closed": topic.closed,
+                                                "priority_id": topic.priority_id,
+                                                "resubmit_date": topic.resubmit_date,
+                                                "state_id": topic.state_id,
+                                                "title": topic.title,
+                                                "assigned_to_member": topic.assigned_to_member
+                                            }
+                            newData.topics.push(newTopic);
+                        });
+                        setData(newData);
                     })
                     .catch((err) => {
                         setError(err);
@@ -97,6 +110,14 @@ const TopicsList = ({useAuthtoken}) => {
                 stateId: newStateId
             }
         });
+        let topicsData = data;
+        // update data on this page from cache.
+        topicsData.topics.forEach((topic) => {
+            if (topic.id === topicId) {
+                topic.state_id = newStateId;
+            }
+        });
+        setData(topicsData);
     };
 
     const setResubmitDateInDB = (topicId, resubmitDate) => {
@@ -106,6 +127,14 @@ const TopicsList = ({useAuthtoken}) => {
                 resubmit_date: resubmitDate
             }
         });
+        let topicsData = data;
+        // update data on this page from cache.
+        topicsData.topics.forEach((topic) => {
+            if (topic.id === topicId) {
+                topic.resubmit_date = resubmitDate;
+            }
+        });
+        setData(topicsData);
     };
 
     const clickDoing = (topicId) => {
