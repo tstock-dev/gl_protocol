@@ -29,7 +29,7 @@ const AllTopics = () => {
         
         {AGENDA_SEPERATOR}
 
-        <TopicsList />
+        <TopicsList useAuthtoken={false}/>
       </div>
       
     </>

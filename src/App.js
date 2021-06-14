@@ -30,7 +30,6 @@ function App() {
   useEffect(() => { 
     if (authToken != null) {
       let user = jwt(authToken);
-      console.log(user);
       setUser(user);
     }
   }, [authToken]);
