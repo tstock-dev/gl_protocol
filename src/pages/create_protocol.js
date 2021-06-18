@@ -62,12 +62,12 @@ const CreateProtocol = () => {
         <div className="resubmission agenda-header">WV-Termin</div>
         <div className="agenda-topic agenda-header">Inhalt</div>
         <div className="responsible agenda-header">Verantwortliche</div>
-        <div className="doing agenda-header center">Doing</div>
-        <div className="done agenda-header center">Done</div>
+        <div className="doing agenda-header center">benutzen</div>
+        <div></div>
         
         {AGENDA_SEPARATOR}
 
-        <TopicsList useAuthtoken={false}/>
+        <TopicsList useAuthtoken={false} onlyOpen={true} />
       </div>
     </>
   );

@@ -3,7 +3,7 @@ import DatePicker from "react-datepicker";
 import { useMutation, gql, useApolloClient } from '@apollo/client';
 import { AUTH_TOKEN, USE_AUTH_TOKEN } from '../constants';
 
-const TopicsList = ({useAuthtoken}) => {
+const TopicsList = ({useAuthtoken, onlyOpen}) => {
     const client = useApolloClient();
     const [ data, setData ] = useState(null);
     const [ loading, setLoading ] = useState(false);
@@ -72,16 +72,20 @@ const TopicsList = ({useAuthtoken}) => {
                         // build own json without apollo fields
                         let newData = {"topics": []};
                         queryResult.data.topics.forEach((topic) => {
-                            let newTopic = {    "id": topic.id,
-                                                "created": topic.created,
-                                                "closed": topic.closed,
-                                                "priority_id": topic.priority_id,
-                                                "resubmit_date": topic.resubmit_date,
-                                                "state_id": topic.state_id,
-                                                "title": topic.title,
-                                                "assigned_to_member": topic.assigned_to_member
-                                            }
-                            newData.topics.push(newTopic);
+                            // only Open
+                            if (!onlyOpen || topic.state_id < 4) {
+                                let newTopic = {    "id": topic.id,
+                                                    "created": topic.created,
+                                                    "closed": topic.closed,
+                                                    "priority_id": topic.priority_id,
+                                                    "resubmit_date": topic.resubmit_date,
+                                                    "state_id": topic.state_id,
+                                                    "title": topic.title,
+                                                    "assigned_to_member": topic.assigned_to_member,
+                                                    "used_protocol_id": -1
+                                                }
+                                newData.topics.push(newTopic);
+                            }
                         });
                         setData(newData);
                     })
@@ -92,7 +96,7 @@ const TopicsList = ({useAuthtoken}) => {
             // Reset the loading state.
             setLoading(false);
         }
-    }, [TOPICS_QUERY, useAuthtoken, client, loading]);
+    }, [TOPICS_QUERY, useAuthtoken, onlyOpen, client, loading]);
 
     useEffect(() => { 
         // load data
@@ -144,6 +148,16 @@ const TopicsList = ({useAuthtoken}) => {
     const clickClosed = (topicId) => {
         setStateInDB(topicId, 4);
     };
+
+    const clickTakeIt = (topicId) => {
+        // update the flag of taken it
+        let topicsData = data;
+        topicsData.topics.forEach((topic) => {
+            if (topic.id === topicId) {
+                topic.used_protocol_id = 0;
+            }
+        })
+    }
     
     if (loading) return <p>Loading...</p>;
     if (error) return <p>Error :(</p>;
@@ -172,10 +186,17 @@ const TopicsList = ({useAuthtoken}) => {
                 {topic.assigned_to_member
                     ? <div className="responsible agenda-item">{topic.assigned_to_member.last_name}, {topic.assigned_to_member.first_name}</div>
                     : <div className="responsible agenda-item"></div> }
-                <button className={"doing agenda-button" + (topic.state_id === 2 ? " checked" : "")}
-                        onClick={() => clickDoing(topic.id)}></button>
-                <button className={"done agenda-button" + (topic.state_id === 4 ? " checked" : "")}
-                        onClick={() => clickClosed(topic.id)}></button>
+                { onlyOpen 
+                    ?   <button className={"doing agenda-button" + (topic.used_protocol_id !== -1 ? " checked" : "")}
+                                onClick={() => clickTakeIt(topic.id)}></button>
+                    :   <button className={"doing agenda-button" + (topic.state_id === 2 ? " checked" : "")}
+                                onClick={() => clickDoing(topic.id)}></button>
+                }
+                { onlyOpen 
+                    ?   <div></div>
+                    :   <button className={"done agenda-button" + (topic.state_id === 4 ? " checked" : "")}
+                                onClick={() => clickClosed(topic.id)}></button>
+                }
             </React.Fragment>
         );
     }
