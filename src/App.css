@@ -164,6 +164,35 @@
   text-align: left;
 }
 
+.page-header-protocol-date {
+  display: inline-flex;
+  font-size: 18px;
+  margin-left: 50px;
+  vertical-align: middle;
+}
+
+.page-header-protocol-save {
+  display: inline;
+  font-size: 18px;
+}
+
+.page-header-protocol-save-btn {
+  float: right;
+  vertical-align: text-bottom;
+}
+
+.page-header-protocol-date-label {
+  margin-top: -7px;
+  padding-right: 15px;
+  padding-top: 6px;
+}
+
+.page-header-protocol-date-date {
+  display: inline-block;
+  margin-top: -4px;
+  width: 120px;
+}
+
 .agenda-table {
   display: grid;
   grid-template-columns: 10% 63% 17% 5% 5%;
@@ -185,6 +214,12 @@
 .agenda-separator {
   border-top: 1px solid grey;
   margin-bottom: 5px;
+  width: 100%;
+}
+
+.line-separator {
+  border-top: 0px solid grey;
+  margin-bottom: 15px;
   width: 100%;
 }
 
@@ -227,4 +262,53 @@
 
 .agenda-button.checked:before {
   content: "✔";
+}
+
+.action-button {
+  background-color: #f8f9fa;
+  border-color: #f8f9fa;
+  border-radius: 10px;
+  color: darkgreen;
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 2px;
+  margin-left: 10px;
+  text-align: center;
+}
+
+.action-button:hover {
+  color: #212529;
+  background-color: #e2e6ea;
+  border-color: #dae0e5;
+}
+
+.action-button.save {
+    background-color: darkgreen;
+    color: white;
+    height: 36px;
+    width: 150px;
+}
+
+.protocol-table {
+  display: grid;
+  grid-template-columns: 12% 20% 5% 12% 20% 31%;
+  max-width: 1384px;
+}
+
+.protocol-table2 {
+  display: grid;
+  grid-template-columns: 12% 57% 31%;
+  max-width: 1384px;
+}
+
+.table-fieldname {
+  text-align: left;
+}
+
+.protocol-table input {
+  width: 100%
+}
+
+.protocol-table2 input {
+  width: 100%
 }

@@ -1,7 +1,7 @@
 import React from "react";
 import TopicsList from "../common/topics_list";
 import { registerLocale } from "react-datepicker";
-import {AGENDA_SEPERATOR} from "../constants";
+import {AGENDA_SEPARATOR} from "../constants";
 import de from "date-fns/locale/de";
 
 import "react-datepicker/dist/react-datepicker.css";
@@ -27,7 +27,7 @@ const AllTopics = () => {
         <div className="doing agenda-header center">Doing</div>
         <div className="done agenda-header center">Done</div>
         
-        {AGENDA_SEPERATOR}
+        {AGENDA_SEPARATOR}
 
         <TopicsList useAuthtoken={false}/>
       </div>
