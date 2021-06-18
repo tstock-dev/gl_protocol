@@ -7,27 +7,81 @@ const CreateProtocol = () => {
 
   const [ date, setDate ] = useState(new Date());
   const [ data, setData ] = useState({"topics": []});
+  const [ elements, setElements ] = useState(0);
 
   const clickSave = () => {
 
   }
 
   const handleTakeIt = (topic) => {
-    // store it to data
-    let tempData = data;
-    let newTopic = {    "id": topic.id,
-                        "created": topic.created,
-                        "priority_id": topic.priority_id,
-                        "state_id": topic.state_id,
-                        "title": topic.title,
-                        "assigned_to_member": topic.assigned_to_member,
-                        "used_protocol_id": -1
-                    }
-                    
-    tempData.topics.push(newTopic);
-    setData(tempData);
-    console.log(tempData);
+    // only unused
+    if (topic.used_protocol_id < 0) {
+      // store it to data
+      let tempData = data;
+      let e = elements;
+      let order = "000" + (e + 1);
+      let newTopic = {    "id": topic.id,
+                          "created": topic.created,
+                          "priority_id": topic.priority_id,
+                          "state_id": topic.state_id,
+                          "title": topic.title,
+                          "assigned_to_member": topic.assigned_to_member,
+                          "order": e + 1,
+                          "order_text": order.substring(order.length - 3, order.length),
+                          "used_protocol_id": -1
+                      }
+                      
+      tempData.topics.push(newTopic);
+      setData(tempData);
+      setElements(tempData.topics.length);
+    }
   }
+
+  const handleUp = (topicId) => {
+    handleUpDown(topicId, 1);
+  }
+
+  const handleDown = (topicId) => {
+    handleUpDown(topicId, - 1);
+  }
+
+  const handleUpDown = (topicId, direction) => {
+    let tempData = data;
+    // get order of the topic
+    let oldOrder = -1;
+    tempData.topics.forEach((topic) => {
+      if (topic.id === topicId) {
+        oldOrder = topic.order;
+        topic.order = oldOrder - direction;
+        let order = "000" + (topic.order);
+        topic.order_text = order.substring(order.length - 3, order.length);
+      }
+    });
+
+    // set order of the second item
+    tempData.topics.forEach((topic) => {
+      if (topic.order === oldOrder - direction && topic.id !== topicId) {
+        topic.order = oldOrder;
+        let order = "000" + (oldOrder);
+        topic.order_text = order.substring(order.length - 3, order.length);
+      }
+    });
+
+    // sort topics
+    tempData.topics.sort(function(a,b){
+      //return a.attributes.OBJECTID - b.attributes.OBJECTID;
+      if(a.order < b.order)
+          return -1;
+      if(a.order > b.order)
+          return 1;
+      return 0;
+    });
+
+    // write back
+    setData(tempData);
+    setElements(elements * -1);
+
+  };
 
   return (
     <>
@@ -86,9 +140,8 @@ const CreateProtocol = () => {
         <div className="doing agenda-header center"></div>
         
         {AGENDA_SEPARATOR}
-
-        <TopicsList useAuthtoken={false} onlyOpen={false} 
-                    tempData={data} />
+        
+        <TopicsList useAuthtoken={false} onlyOpen={false} tempData={data} onUp={handleUp} onDown={handleDown} />
       </div>
 
       <div className="table-col1"></div>
@@ -101,7 +154,7 @@ const CreateProtocol = () => {
         <div className="resubmission agenda-header">WV-Termin</div>
         <div className="agenda-topic agenda-header">Inhalt</div>
         <div className="responsible agenda-header">Verantwortliche</div>
-        <div className="doing agenda-header center">benutzen</div>
+        <div className="doing agenda-header center">benutzt</div>
         <div className="doing agenda-header center"></div>
         
         {AGENDA_SEPARATOR}
