@@ -3,7 +3,7 @@ import DatePicker from "react-datepicker";
 import { useMutation, gql, useApolloClient } from '@apollo/client';
 import { AUTH_TOKEN, USE_AUTH_TOKEN } from '../constants';
 
-const TopicsList = ({useAuthtoken, onlyOpen}) => {
+const TopicsList = ({useAuthtoken, onlyOpen, tempData, onTakeIt}) => {
     const client = useApolloClient();
     const [ data, setData ] = useState(null);
     const [ loading, setLoading ] = useState(false);
@@ -99,9 +99,15 @@ const TopicsList = ({useAuthtoken, onlyOpen}) => {
     }, [TOPICS_QUERY, useAuthtoken, onlyOpen, client, loading]);
 
     useEffect(() => { 
-        // load data
-        loadTopicList();
-    }, [useAuthtoken, loadTopicList]); 
+        if (typeof tempData === "undefined")
+        {
+            // load data
+            loadTopicList();
+        } else {
+            console.log("using tempData");
+            setData(tempData);
+        }
+    }, [useAuthtoken, tempData, loadTopicList]); 
     
 
     const [ setTopicState ]        = useMutation(TOPICS_SET_STATE);
@@ -155,8 +161,11 @@ const TopicsList = ({useAuthtoken, onlyOpen}) => {
         topicsData.topics.forEach((topic) => {
             if (topic.id === topicId) {
                 topic.used_protocol_id = 0;
+                if (typeof onTakeIt !== "undefined")
+                    onTakeIt(topic);
             }
         })
+        setData(topicsData);
     }
     
     if (loading) return <p>Loading...</p>;
@@ -188,14 +197,14 @@ const TopicsList = ({useAuthtoken, onlyOpen}) => {
                     : <div className="responsible agenda-item"></div> }
                 { onlyOpen 
                     ?   <button className={"doing agenda-button" + (topic.used_protocol_id !== -1 ? " checked" : "")}
-                                onClick={() => clickTakeIt(topic.id)}></button>
+                                onClick={() => clickTakeIt(topic.id)} title="klicken, um auf diesen offen Punkt ins Protokoll auzunehmen"></button>
                     :   <button className={"doing agenda-button" + (topic.state_id === 2 ? " checked" : "")}
-                                onClick={() => clickDoing(topic.id)}></button>
+                                onClick={() => clickDoing(topic.id)} title='klicken, um auf "in Bearbeitung" umzustellen'></button>
                 }
                 { onlyOpen 
                     ?   <div></div>
                     :   <button className={"done agenda-button" + (topic.state_id === 4 ? " checked" : "")}
-                                onClick={() => clickClosed(topic.id)}></button>
+                                onClick={() => clickClosed(topic.id)} title='klicken, um auf "Erledigt" umzustellen'></button>
                 }
             </React.Fragment>
         );
