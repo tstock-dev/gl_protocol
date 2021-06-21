@@ -250,6 +250,10 @@ h3.page-sub-header {
   width: 90%;
 }
 
+.agenda-order {
+  text-align: left;
+}
+
 .agenda-button {
   background-color: #f8f9fa;
   border-color: #f8f9fa;
@@ -296,6 +300,14 @@ h3.page-sub-header {
     color: white;
     height: 36px;
     width: 150px;
+}
+
+.up.agenda-button.checked:before {
+  content: "▲";
+}
+
+.down.agenda-button.checked:before {
+  content: "▼";
 }
 
 .protocol-table {

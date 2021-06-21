@@ -3,7 +3,7 @@ import DatePicker from "react-datepicker";
 import { useMutation, gql, useApolloClient } from '@apollo/client';
 import { AUTH_TOKEN, USE_AUTH_TOKEN } from '../constants';
 
-const TopicsList = ({useAuthtoken, onlyOpen, tempData, onTakeIt}) => {
+const TopicsList = ({useAuthtoken, onlyOpen, tempData, onTakeIt, onUp, onDown}) => {
     const client = useApolloClient();
     const [ data, setData ] = useState(null);
     const [ loading, setLoading ] = useState(false);
@@ -99,16 +99,16 @@ const TopicsList = ({useAuthtoken, onlyOpen, tempData, onTakeIt}) => {
     }, [TOPICS_QUERY, useAuthtoken, onlyOpen, client, loading]);
 
     useEffect(() => { 
+        
         if (typeof tempData === "undefined")
         {
             // load data
             loadTopicList();
         } else {
-            console.log("using tempData");
             setData(tempData);
         }
-    }, [useAuthtoken, tempData, loadTopicList]); 
-    
+    }, [tempData, loadTopicList]); 
+
 
     const [ setTopicState ]        = useMutation(TOPICS_SET_STATE);
     const [ setTopicResubmitDate ] = useMutation(TOPICS_SET_RESUBMITION);
@@ -160,13 +160,24 @@ const TopicsList = ({useAuthtoken, onlyOpen, tempData, onTakeIt}) => {
         let topicsData = data;
         topicsData.topics.forEach((topic) => {
             if (topic.id === topicId) {
-                topic.used_protocol_id = 0;
                 if (typeof onTakeIt !== "undefined")
                     onTakeIt(topic);
+                topic.used_protocol_id = 0;
             }
         })
         setData(topicsData);
     }
+
+    const clickUp = (topicId) => {
+        if (typeof onUp !== "undefined")
+            onUp(topicId);
+    };
+
+    const clickDown = (topicId) => {
+        if (typeof onDown !== "undefined")
+            onDown(topicId);
+    };
+
     
     if (loading) return <p>Loading...</p>;
     if (error) return <p>Error :(</p>;
@@ -176,19 +187,22 @@ const TopicsList = ({useAuthtoken, onlyOpen, tempData, onTakeIt}) => {
     } else {
         return data.topics.map((topic) =>
             <React.Fragment key={topic.id}>
-                <div>
-                    <DatePicker
-                    className="resubmission agenda-date"
-                    closeOnScroll={true}
-                    dateFormat="dd.MM.yyyy"
-                    locale="de"
-                    name="startDate"
-                    onChange={(date) => setResubmitDateInDB(topic.id, date)}
-                    selected={Date.parse(topic.resubmit_date)}
-                    showWeekNumbers={true}
-                    todayButton="Heute"
-                    />
-                </div>
+                { typeof tempData === "undefined"
+                    ?   <div>
+                            <DatePicker
+                                className="resubmission agenda-date"
+                                closeOnScroll={true}
+                                dateFormat="dd.MM.yyyy"
+                                locale="de"
+                                name="startDate"
+                                onChange={(date) => setResubmitDateInDB(topic.id, date)}
+                                selected={Date.parse(topic.resubmit_date)}
+                                showWeekNumbers={true}
+                                todayButton="Heute"
+                            />
+                        </div>
+                    :   <div className="agenda-order">{topic.order_text}</div>
+                }
                 <div className="agenda-topic agenda-item">
                     {topic.title}
                 </div>
@@ -198,13 +212,23 @@ const TopicsList = ({useAuthtoken, onlyOpen, tempData, onTakeIt}) => {
                 { onlyOpen 
                     ?   <button className={"doing agenda-button" + (topic.used_protocol_id !== -1 ? " checked" : "")}
                                 onClick={() => clickTakeIt(topic.id)} title="klicken, um auf diesen offen Punkt ins Protokoll auzunehmen"></button>
-                    :   <button className={"doing agenda-button" + (topic.state_id === 2 ? " checked" : "")}
-                                onClick={() => clickDoing(topic.id)} title='klicken, um auf "in Bearbeitung" umzustellen'></button>
+                    :   "order" in topic
+                            ?   topic.order > 1
+                                    ?   <button className="up agenda-button checked"
+                                                onClick={() => clickUp(topic.id)} title='klicken, um nach oben zu bewegen'></button>
+                                    :   <div></div>
+                            :   <button className={"doing agenda-button" + (topic.state_id === 2 ? " checked" : "")}
+                                        onClick={() => clickDoing(topic.id)} title='klicken, um auf "in Bearbeitung" umzustellen'></button>
                 }
                 { onlyOpen 
                     ?   <div></div>
-                    :   <button className={"done agenda-button" + (topic.state_id === 4 ? " checked" : "")}
-                                onClick={() => clickClosed(topic.id)} title='klicken, um auf "Erledigt" umzustellen'></button>
+                    :   "order" in topic
+                            ?   topic.order < data.topics.length
+                                    ?   <button className="down agenda-button checked"
+                                                onClick={() => clickDown(topic.id)} title='klicken, um nach unten zu bewegen'></button>
+                                    :   <div></div>
+                            :   <button className={"done agenda-button" + (topic.state_id === 4 ? " checked" : "")}
+                                        onClick={() => clickClosed(topic.id)} title='klicken, um auf "Erledigt" umzustellen'></button>
                 }
             </React.Fragment>
         );
