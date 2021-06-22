@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from "react";
 import TopicsList from "../common/topics_list";
 import DatePicker from "react-datepicker";
+import Dropdown from "../components/combobox/dropdown";
 import { gql, useQuery } from '@apollo/client';
 import {AGENDA_SEPARATOR, LINE_SEPARATOR} from "../constants";
+
 
 const CreateProtocol = () => {
 
@@ -10,8 +12,7 @@ const CreateProtocol = () => {
         query getAllMembers {
             members {
                 id
-                first_name
-                last_name
+                combined_name
             }
         }
     `;
@@ -26,7 +27,11 @@ const CreateProtocol = () => {
   useEffect(() => { 
     // load member data
     if(loading === false && data) {
-      setMembers(data);
+      let memberOptions = [];
+      data.members.forEach(element => {
+        memberOptions.push({"id": element.id, "value": element.combined_name});
+      });
+      setMembers(memberOptions);
     }
   }, [loading, data])
 
@@ -138,10 +143,10 @@ const CreateProtocol = () => {
       <div className="table-col1"></div>
       <div className="table protocol-table">
         <div className="table-fieldname">Protokollant:</div>
-        <div><input type="text"></input></div>
+        <Dropdown name="protocoller" options={members} selected_id={3} />
         <div className="table-seperator"></div>
         <div className="table-fieldname">Moderator:</div>
-        <div><input type="text"></input></div>
+        <Dropdown name="moderator" options={members} selected_id={2} />
       </div>
       <div className="table-col1"></div>
       <div className="table protocol-table2">
