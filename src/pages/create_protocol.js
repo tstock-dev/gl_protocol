@@ -1,23 +1,44 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import TopicsList from "../common/topics_list";
 import DatePicker from "react-datepicker";
+import { gql, useQuery } from '@apollo/client';
 import {AGENDA_SEPARATOR, LINE_SEPARATOR} from "../constants";
 
 const CreateProtocol = () => {
 
+  const MEMBERS_QUERY = gql`
+        query getAllMembers {
+            members {
+                id
+                first_name
+                last_name
+            }
+        }
+    `;
+
+  const { loading, error, data } = useQuery(MEMBERS_QUERY);
+
   const [ date, setDate ] = useState(new Date());
-  const [ data, setData ] = useState({"topics": []});
+  const [ topicsData, setTopicsData ] = useState({"topics": []});
   const [ elements, setElements ] = useState(0);
+  const [ members, setMembers ] = useState({});
+  
+  useEffect(() => { 
+    // load member data
+    if(loading === false && data) {
+      setMembers(data);
+    }
+  }, [loading, data])
 
   const clickSave = () => {
-
+    console.log(members);
   }
 
   const handleTakeIt = (topic) => {
     // only unused
     if (topic.used_protocol_id < 0) {
       // store it to data
-      let tempData = data;
+      let tempData = topicsData;
       let e = elements;
       let order = "000" + (e + 1);
       let newTopic = {    "id": topic.id,
@@ -32,7 +53,7 @@ const CreateProtocol = () => {
                       }
                       
       tempData.topics.push(newTopic);
-      setData(tempData);
+      setTopicsData(tempData);
       setElements(tempData.topics.length);
     }
   }
@@ -46,7 +67,7 @@ const CreateProtocol = () => {
   }
 
   const handleUpDown = (topicId, direction) => {
-    let tempData = data;
+    let tempData = topicsData;
     // get order of the topic
     let oldOrder = -1;
     tempData.topics.forEach((topic) => {
@@ -78,10 +99,12 @@ const CreateProtocol = () => {
     });
 
     // write back
-    setData(tempData);
+    setTopicsData(tempData);
     setElements(elements * -1);
-
   };
+
+  if (loading) return "Loading...";
+  if (error) return "Error! {error.message}";
 
   return (
     <>
@@ -141,7 +164,7 @@ const CreateProtocol = () => {
         
         {AGENDA_SEPARATOR}
         
-        <TopicsList useAuthtoken={false} onlyOpen={false} tempData={data} onUp={handleUp} onDown={handleDown} />
+        <TopicsList useAuthtoken={false} onlyOpen={false} tempData={topicsData} onUp={handleUp} onDown={handleDown} />
       </div>
 
       <div className="table-col1"></div>
