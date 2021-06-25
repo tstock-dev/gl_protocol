@@ -23,6 +23,8 @@ const CreateProtocol = () => {
   const [ topicsData, setTopicsData ] = useState({"topics": []});
   const [ elements, setElements ] = useState(0);
   const [ members, setMembers ] = useState({});
+  const [ beginTimes, setBeginTimes ] = useState([]);
+  const [ endTimes, setEndTimes ] = useState([]);
   
   useEffect(() => { 
     // load member data
@@ -32,11 +34,47 @@ const CreateProtocol = () => {
         memberOptions.push({"id": element.id, "value": element.combined_name});
       });
       setMembers(memberOptions);
+
+      // generate begin times
+      let beginOptions = [];
+      let endOptions = [];
+      setBeginTimes(createTimesForOptions(beginOptions, 0, 18, 45));
+      setEndTimes(createTimesForOptions(endOptions, 1, 19, 0));
     }
   }, [loading, data])
 
+  const createTimesForOptions = (options, startFactor, maxHour, maxMinute) => {
+    // get starting time by factor
+    let currTime = new Date(1970, 1, 1, 7, 30, 0);
+    currTime = new Date(currTime.getTime() + (startFactor * 15) * 60 * 1000)
+    /// generate quartly times
+    while (true) {
+      let hour = "00" + currTime.getHours();
+      let minute = "00" + currTime.getMinutes();
+      let timeStr = hour.substring(hour.length-2) + ":" + minute.substring(minute.length-2);
+      options.push({"id": timeStr + ":00", "value": timeStr});
+      currTime = new Date(currTime.getTime() + 15 * 60 * 1000);
+      if (currTime.getHours() > maxHour) {
+        break;
+      } else if (currTime.getHours() === maxHour && currTime.getMinutes() > maxMinute) {
+        break;
+      }
+    }
+    return options;
+  }
+
   const clickSave = () => {
     console.log(members);
+  }
+
+  const changeBeginTime = (itemNumber) => {
+    console.log("beginDate: ", itemNumber, beginTimes[itemNumber]["id"]);
+    setEndTimes(createTimesForOptions([], itemNumber + 1, 19, 0));
+    let endTimeCombo = document.getElementById("end-meeting");
+    endTimeCombo.selectedIndex = 1;
+  }
+
+  const changeEndTime = (itemNumber) => {
   }
 
   const handleTakeIt = (topic) => {
@@ -138,6 +176,26 @@ const CreateProtocol = () => {
             <button className="action-button save page-header-protocol-save-btn" onClick={() => clickSave()}>Speichern</button>
           </div>
         </h2>
+      </div>
+
+      <div className="table-col1"></div>
+      <div className="table protocol-table">
+        <div className="table-fieldname">Beginn:</div>
+        <Dropdown name="begin-meeting" 
+                  options={beginTimes} 
+                  selected_id={3}
+                  onChange={(itemNumber) => changeBeginTime(itemNumber)} />
+        <div className="table-seperator"></div>
+        <div className="table-fieldname">Ende:</div>
+        <Dropdown name="end-meeting" 
+                  options={endTimes} 
+                  selected_id={1}
+                  onChange={(itemNumber) => changeEndTime(itemNumber)} />
+      </div>
+      <div className="table-col1"></div>
+      <div className="table protocol-table2">
+        <div className="table-fieldname">Kurzbeschreibung:</div>
+        <div><input type="text"></input></div>
       </div>
 
       <div className="table-col1"></div>
