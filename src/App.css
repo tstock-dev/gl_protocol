@@ -312,13 +312,13 @@ h3.page-sub-header {
 
 .protocol-table {
   display: grid;
-  grid-template-columns: 12% 20% 5% 12% 20% 31%;
+  grid-template-columns: 12% 10% 4% 6% 10% 11% 9% 14% 2% 8% 14%;
   max-width: 1384px;
 }
 
 .protocol-table2 {
   display: grid;
-  grid-template-columns: 12% 57% 31%;
+  grid-template-columns: 12% 88%;
   max-width: 1384px;
 }
 

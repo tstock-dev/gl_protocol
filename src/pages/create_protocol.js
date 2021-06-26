@@ -191,15 +191,7 @@ const CreateProtocol = () => {
                   options={endTimes} 
                   selected_id={1}
                   onChange={(itemNumber) => changeEndTime(itemNumber)} />
-      </div>
-      <div className="table-col1"></div>
-      <div className="table protocol-table2">
-        <div className="table-fieldname">Kurzbeschreibung:</div>
-        <div><input type="text"></input></div>
-      </div>
-
-      <div className="table-col1"></div>
-      <div className="table protocol-table">
+        <div className="table-seperator"></div>
         <div className="table-fieldname">Protokollant:</div>
         <Dropdown name="protocoller" options={members} selected_id={3} />
         <div className="table-seperator"></div>
