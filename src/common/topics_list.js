@@ -3,7 +3,7 @@ import DatePicker from "react-datepicker";
 import { useMutation, gql, useApolloClient } from '@apollo/client';
 import { AUTH_TOKEN, USE_AUTH_TOKEN } from '../constants';
 
-const TopicsList = ({useAuthtoken, onlyOpen, tempData, onTakeIt, onUp, onDown}) => {
+const TopicsList = ({useAuthtoken, onlyOpen, tempData, onTakeIt, onUp, onDown, onChangeTitle}) => {
     const client = useApolloClient();
     const [ data, setData ] = useState(null);
     const [ loading, setLoading ] = useState(false);
@@ -74,7 +74,8 @@ const TopicsList = ({useAuthtoken, onlyOpen, tempData, onTakeIt, onUp, onDown}) 
                         queryResult.data.topics.forEach((topic) => {
                             // only Open
                             if (!onlyOpen || topic.state_id < 4) {
-                                let newTopic = {    "id": topic.id,
+                                let newTopic = {    "internalId": newData.topics.length,
+                                                    "id": topic.id,
                                                     "created": topic.created,
                                                     "closed": topic.closed,
                                                     "priority_id": topic.priority_id,
@@ -178,6 +179,11 @@ const TopicsList = ({useAuthtoken, onlyOpen, tempData, onTakeIt, onUp, onDown}) 
             onDown(topicId);
     };
 
+    const changeTitle = (orderId, input) => {
+        if (typeof onChangeTitle !== "undefined")
+            onChangeTitle(orderId, input.target.value);
+    }
+
     
     if (loading) return <p>Loading...</p>;
     if (error) return <p>Error :(</p>;
@@ -186,7 +192,7 @@ const TopicsList = ({useAuthtoken, onlyOpen, tempData, onTakeIt, onUp, onDown}) 
         return <>loading...</>
     } else {
         return data.topics.map((topic) =>
-            <React.Fragment key={topic.id}>
+            <React.Fragment key={topic.internalId}>
                 { typeof tempData === "undefined"
                     ?   <div>
                             <DatePicker
@@ -203,19 +209,22 @@ const TopicsList = ({useAuthtoken, onlyOpen, tempData, onTakeIt, onUp, onDown}) 
                         </div>
                     :   <div className="agenda-order">{topic.order_text}</div>
                 }
-                <div className="agenda-topic agenda-item">
-                    {topic.title}
-                </div>
+                {topic.id > 0
+                    ? <div className="agenda-topic agenda-item">{topic.title}</div>
+                    : <input    className="agenda-topic agenda-item"
+                                type="text" value={topic.title} 
+                                onChange={(obj) => changeTitle(topic.order, obj)}></input>
+                }
                 {topic.assigned_to_member
                     ? <div className="responsible agenda-item">{topic.assigned_to_member.last_name}, {topic.assigned_to_member.first_name}</div>
                     : <div className="responsible agenda-item"></div> }
                 { onlyOpen 
                     ?   <button className={"doing agenda-button" + (topic.used_protocol_id !== -1 ? " checked" : "")}
-                                onClick={() => clickTakeIt(topic.id)} title="klicken, um auf diesen offen Punkt ins Protokoll auzunehmen"></button>
+                                onClick={() => clickTakeIt(topic.id)} title="klicken, um diesen offenwn Agenda-Punkt ins Protokoll auzunehmen"></button>
                     :   "order" in topic
                             ?   topic.order > 1
                                     ?   <button className="up agenda-button checked"
-                                                onClick={() => clickUp(topic.id)} title='klicken, um nach oben zu bewegen'></button>
+                                                onClick={() => clickUp(topic.internalId)} title='klicken, um nach oben zu bewegen'></button>
                                     :   <div></div>
                             :   <button className={"doing agenda-button" + (topic.state_id === 2 ? " checked" : "")}
                                         onClick={() => clickDoing(topic.id)} title='klicken, um auf "in Bearbeitung" umzustellen'></button>
@@ -225,7 +234,7 @@ const TopicsList = ({useAuthtoken, onlyOpen, tempData, onTakeIt, onUp, onDown}) 
                     :   "order" in topic
                             ?   topic.order < data.topics.length
                                     ?   <button className="down agenda-button checked"
-                                                onClick={() => clickDown(topic.id)} title='klicken, um nach unten zu bewegen'></button>
+                                                onClick={() => clickDown(topic.internalId)} title='klicken, um nach unten zu bewegen'></button>
                                     :   <div></div>
                             :   <button className={"done agenda-button" + (topic.state_id === 4 ? " checked" : "")}
                                         onClick={() => clickClosed(topic.id)} title='klicken, um auf "Erledigt" umzustellen'></button>

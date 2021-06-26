@@ -67,6 +67,10 @@ const CreateProtocol = () => {
     console.log(members);
   }
 
+  const clickPlus = () => {
+    storeNewTopic();
+  }
+
   const changeBeginTime = (itemNumber) => {
     console.log("beginDate: ", itemNumber, beginTimes[itemNumber]["id"]);
     setEndTimes(createTimesForOptions([], itemNumber + 1, 19, 0));
@@ -77,27 +81,32 @@ const CreateProtocol = () => {
   const changeEndTime = (itemNumber) => {
   }
 
+  const storeNewTopic = (topic) => {
+    // store it to data
+    let tempData = topicsData;
+    let e = elements;
+    let order = "000" + (e + 1);
+    let newTopic = {    "internalId": tempData.topics.length,
+                        "id": topic ? topic.id : -1,
+                        "created": topic ? topic.created : -1,
+                        "priority_id": topic ? topic.priority_id : 1,
+                        "state_id": topic ? topic.state_id : 1,
+                        "title": topic ? topic.title : "",
+                        "assigned_to_member": topic ? topic.assigned_to_member : -1,
+                        "order": e + 1,
+                        "order_text": order.substring(order.length - 3, order.length),
+                        "used_protocol_id": -1
+                    }
+                    
+    tempData.topics.push(newTopic);
+    setTopicsData(tempData);
+    setElements(tempData.topics.length);
+  }
+
   const handleTakeIt = (topic) => {
     // only unused
     if (topic.used_protocol_id < 0) {
-      // store it to data
-      let tempData = topicsData;
-      let e = elements;
-      let order = "000" + (e + 1);
-      let newTopic = {    "id": topic.id,
-                          "created": topic.created,
-                          "priority_id": topic.priority_id,
-                          "state_id": topic.state_id,
-                          "title": topic.title,
-                          "assigned_to_member": topic.assigned_to_member,
-                          "order": e + 1,
-                          "order_text": order.substring(order.length - 3, order.length),
-                          "used_protocol_id": -1
-                      }
-                      
-      tempData.topics.push(newTopic);
-      setTopicsData(tempData);
-      setElements(tempData.topics.length);
+      storeNewTopic(topic);
     }
   }
 
@@ -114,7 +123,7 @@ const CreateProtocol = () => {
     // get order of the topic
     let oldOrder = -1;
     tempData.topics.forEach((topic) => {
-      if (topic.id === topicId) {
+      if (topic.internalId === topicId) {
         oldOrder = topic.order;
         topic.order = oldOrder - direction;
         let order = "000" + (topic.order);
@@ -124,7 +133,7 @@ const CreateProtocol = () => {
 
     // set order of the second item
     tempData.topics.forEach((topic) => {
-      if (topic.order === oldOrder - direction && topic.id !== topicId) {
+      if (topic.order === oldOrder - direction && topic.internalId !== topicId) {
         topic.order = oldOrder;
         let order = "000" + (oldOrder);
         topic.order_text = order.substring(order.length - 3, order.length);
@@ -145,6 +154,18 @@ const CreateProtocol = () => {
     setTopicsData(tempData);
     setElements(elements * -1);
   };
+
+  const handleChangeTitle = (orderId, value) => {
+    let tempData = topicsData;
+    // update data in cache.
+    tempData.topics.forEach((topic) => {
+        if (topic.order === orderId) {
+            topic.title = value;
+        }
+    });
+    setTopicsData(tempData);
+    setElements(-1 * elements);
+}
 
   if (loading) return "Loading...";
   if (error) return "Error! {error.message}";
@@ -208,7 +229,14 @@ const CreateProtocol = () => {
       {LINE_SEPARATOR}
 
       <div className="table-col1"></div>
-      <h3 className="page-sub-header">Agenda-Punkte für das Protokoll:</h3>
+      <div>
+        <h3 className="page-sub-header">Agenda-Punkte für das Protokoll:</h3>
+        <button className="page-header-protocol-save-btn plus agenda-button"
+              onClick={() => clickPlus()} 
+              title="klicken, um neuen Eintrag zu erstellen">
+        </button>
+      </div>
+
       <div className="table-col1"></div>
       <div className="table agenda-table">
         <div className="agenda-topic agenda-header">Nr</div>
@@ -219,7 +247,9 @@ const CreateProtocol = () => {
         
         {AGENDA_SEPARATOR}
         
-        <TopicsList useAuthtoken={false} onlyOpen={false} tempData={topicsData} onUp={handleUp} onDown={handleDown} />
+        <TopicsList useAuthtoken={false} onlyOpen={false} tempData={topicsData} 
+                    onUp={handleUp} onDown={handleDown}
+                    onChangeTitle={handleChangeTitle} />
       </div>
 
       <div className="table-col1"></div>

@@ -166,6 +166,7 @@ h3.page-sub-header {
   font-size: 28px;
   line-height: 36px;
   margin-bottom: 5px;
+  float: left;
   font-weight: 700;
   font-style: normal;
   line-height: 1.25;
@@ -261,6 +262,7 @@ h3.page-sub-header {
   color: darkgreen;
   font-size: 18px;
   font-weight: 600;
+  height: 33px;
   margin-bottom: 2px;
   margin-left: 10px;
   text-align: center;
@@ -308,6 +310,10 @@ h3.page-sub-header {
 
 .down.agenda-button.checked:before {
   content: "▼";
+}
+
+.plus:before {
+  content: "✚";
 }
 
 .protocol-table {
