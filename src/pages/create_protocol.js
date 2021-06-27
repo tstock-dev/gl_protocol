@@ -92,7 +92,8 @@ const CreateProtocol = () => {
                         "priority_id": topic ? topic.priority_id : 1,
                         "state_id": topic ? topic.state_id : 1,
                         "title": topic ? topic.title : "",
-                        "assigned_to_member": topic ? topic.assigned_to_member : -1,
+                        "member_assigned": topic ? topic.member_assigned : -1,
+                        "assigned_to_member": topic ? topic.assigned_to_member : {},
                         "order": e + 1,
                         "order_text": order.substring(order.length - 3, order.length),
                         "used_protocol_id": -1
@@ -165,7 +166,19 @@ const CreateProtocol = () => {
     });
     setTopicsData(tempData);
     setElements(-1 * elements);
-}
+  }
+
+  const handleChangeMember = (orderId, value) => {
+    let tempData = topicsData;
+    // update data in cache.
+    tempData.topics.forEach((topic) => {
+        if (topic.order === orderId) {
+            topic.member_assigned = value;
+        }
+    });
+    setTopicsData(tempData);
+    setElements(-1 * elements);
+  }
 
   if (loading) return "Loading...";
   if (error) return "Error! {error.message}";
@@ -247,9 +260,9 @@ const CreateProtocol = () => {
         
         {AGENDA_SEPARATOR}
         
-        <TopicsList useAuthtoken={false} onlyOpen={false} tempData={topicsData} 
+        <TopicsList useAuthtoken={false} onlyOpen={false} tempData={topicsData} memberOptions={members}
                     onUp={handleUp} onDown={handleDown}
-                    onChangeTitle={handleChangeTitle} />
+                    onChangeTitle={handleChangeTitle} onChangeMember={handleChangeMember} />
       </div>
 
       <div className="table-col1"></div>

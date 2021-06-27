@@ -237,8 +237,17 @@ h3.page-sub-header {
   font-size: 18px;
   font-weight: 600;
   margin-bottom: 2px;
+  max-height: 32px;
   padding-bottom: 4px;
   text-align: left;
+}
+
+input .agenda-item {
+  padding-bottom: 0px;
+}
+
+.responsible.agenda-item {
+  padding-left: 7px;
 }
 
 .agenda-date {

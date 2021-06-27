@@ -1,9 +1,11 @@
 import React, { useEffect, useState, useCallback } from "react";
 import DatePicker from "react-datepicker";
+import Dropdown from "../components/combobox/dropdown";
 import { useMutation, gql, useApolloClient } from '@apollo/client';
 import { AUTH_TOKEN, USE_AUTH_TOKEN } from '../constants';
 
-const TopicsList = ({useAuthtoken, onlyOpen, tempData, onTakeIt, onUp, onDown, onChangeTitle}) => {
+const TopicsList = ({useAuthtoken, onlyOpen, tempData, memberOptions, 
+                     onTakeIt, onUp, onDown, onChangeTitle, onChangeMember}) => {
     const client = useApolloClient();
     const [ data, setData ] = useState(null);
     const [ loading, setLoading ] = useState(false);
@@ -19,9 +21,10 @@ const TopicsList = ({useAuthtoken, onlyOpen, tempData, onTakeIt, onUp, onDown, o
                 created
                 closed
                 resubmit_date
+                member_assigned
                 assigned_to_member {
-                last_name 
-                first_name
+                    last_name 
+                    first_name
                 }
             }
         }
@@ -184,6 +187,11 @@ const TopicsList = ({useAuthtoken, onlyOpen, tempData, onTakeIt, onUp, onDown, o
             onChangeTitle(orderId, input.target.value);
     }
 
+    const changeMemberAssigned = (orderId, itemNumber) =>  {
+        if (typeof onChangeMember !== "undefined")
+            onChangeMember(orderId, itemNumber);
+    }
+
     
     if (loading) return <p>Loading...</p>;
     if (error) return <p>Error :(</p>;
@@ -210,14 +218,22 @@ const TopicsList = ({useAuthtoken, onlyOpen, tempData, onTakeIt, onUp, onDown, o
                     :   <div className="agenda-order">{topic.order_text}</div>
                 }
                 {topic.id > 0
-                    ? <div className="agenda-topic agenda-item">{topic.title}</div>
-                    : <input    className="agenda-topic agenda-item"
+                    ?   <div className="agenda-topic agenda-item">{topic.title}</div>
+                    :   <input  className="agenda-topic agenda-item"
                                 type="text" value={topic.title} 
                                 onChange={(obj) => changeTitle(topic.order, obj)}></input>
                 }
-                {topic.assigned_to_member
-                    ? <div className="responsible agenda-item">{topic.assigned_to_member.last_name}, {topic.assigned_to_member.first_name}</div>
-                    : <div className="responsible agenda-item"></div> }
+                {topic.id > 0
+                    ?   topic.assigned_to_member
+                        ?   <div className="responsible agenda-item">{topic.assigned_to_member.last_name}, {topic.assigned_to_member.first_name}</div>
+                        :   <div className="responsible agenda-item"></div>
+                    :   <div className="agenda-item">
+                            <Dropdown name="begin-meeting" 
+                                options={memberOptions} 
+                                selected_id={topic.member_assigned}
+                                onChange={(itemNumber) => changeMemberAssigned(topic.order, itemNumber)} />
+                        </div>
+                }
                 { onlyOpen 
                     ?   <button className={"doing agenda-button" + (topic.used_protocol_id !== -1 ? " checked" : "")}
                                 onClick={() => clickTakeIt(topic.id)} title="klicken, um diesen offenwn Agenda-Punkt ins Protokoll auzunehmen"></button>
