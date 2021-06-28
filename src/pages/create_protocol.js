@@ -72,7 +72,6 @@ const CreateProtocol = () => {
   }
 
   const changeBeginTime = (itemNumber) => {
-    console.log("beginDate: ", itemNumber, beginTimes[itemNumber]["id"]);
     setEndTimes(createTimesForOptions([], itemNumber + 1, 19, 0));
     let endTimeCombo = document.getElementById("end-meeting");
     endTimeCombo.selectedIndex = 1;
