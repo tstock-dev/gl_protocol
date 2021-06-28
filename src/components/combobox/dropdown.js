@@ -15,19 +15,21 @@ const Dropdown = ({name, options, selected_id, onChange}) => {
     if (typeof options !== "undefined" && options.length > 0) {
         optionsList =   options.map((option) =>
                             <React.Fragment key={option.id}>
-                                <StyledOption selected={option.id * 1 === selected_id}>{option.value}</StyledOption>
+                                <StyledOption>{option.value}</StyledOption>
                             </React.Fragment>
                         );
     }
 
     const selectedChanged = (element) => {
-        onChange(element.target.selectedIndex);
+        if (typeof onChange !== "undefined")
+            onChange(element.target.selectedIndex);
     }
 
     return (
         <>
             <DropdownWrapper >
-                <StyledSelect id={name} name={name} onChange={(elem) => selectedChanged(elem)}>
+                <StyledSelect   id={name} name={name} value={selected_id}
+                                onChange={(elem) => selectedChanged(elem)}>
                     {optionsList}
                 </StyledSelect>
             </DropdownWrapper>
