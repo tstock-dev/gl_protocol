@@ -25,6 +25,9 @@ const CreateProtocol = () => {
   const [ members, setMembers ] = useState({});
   const [ beginTimes, setBeginTimes ] = useState([]);
   const [ endTimes, setEndTimes ] = useState([]);
+  const [ moderator, setModerator ] = useState(-1);
+  const [ recorder, setRecorder ] = useState(-1);
+  const [ nextRecorder, setNextRecorder ] = useState(-1);
   
   useEffect(() => { 
     // load member data
@@ -78,6 +81,18 @@ const CreateProtocol = () => {
   }
 
   const changeEndTime = (itemNumber) => {
+  }
+
+  const changeModerator = (itemNumber) => {
+    setModerator(itemNumber);
+  }
+
+  const changeRecorder = (itemNumber) => {
+    setRecorder(itemNumber)
+  }
+
+  const changeNextRecorder = (itemNumber) => {
+    setNextRecorder(itemNumber)
   }
 
   const storeNewTopic = (topic) => {
@@ -191,7 +206,7 @@ const CreateProtocol = () => {
         <h2>Protokoll erstellen
           <div className="page-header-protocol-date">
             <div className="page-header-protocol-date-label">für den:</div>
-            <div className="page-header-protocol-date-date">
+            <div className="page-header-protocol-date-date" title="Datum der Sitzung eintragen">
               <DatePicker
                 className="resubmission agenda-date"
                 closeOnScroll={true}
@@ -206,7 +221,8 @@ const CreateProtocol = () => {
             </div>
           </div>
           <div className="page-header-protocol-save">
-            <button className="action-button save page-header-protocol-save-btn" onClick={() => clickSave()}>Speichern</button>
+            <button className="action-button save page-header-protocol-save-btn" 
+                    onClick={() => clickSave()} title="Protokoll speichern">Speichern</button>
           </div>
         </h2>
       </div>
@@ -214,27 +230,41 @@ const CreateProtocol = () => {
       <div className="table-col1"></div>
       <div className="table protocol-table">
         <div className="table-fieldname">Beginn:</div>
-        <Dropdown name="begin-meeting" 
+        <Dropdown name="begin-meeting" title="Anfang-Zeit der Sitzung auswählen"
                   options={beginTimes} 
-                  selected_id={3}
+                  selected_id={1}
                   onChange={(itemNumber) => changeBeginTime(itemNumber)} />
         <div className="table-seperator"></div>
         <div className="table-fieldname">Ende:</div>
-        <Dropdown name="end-meeting" 
+        <Dropdown name="end-meeting" title="Ende-Zeit der Sitzung auswählen"
                   options={endTimes} 
                   selected_id={1}
                   onChange={(itemNumber) => changeEndTime(itemNumber)} />
         <div className="table-seperator"></div>
-        <div className="table-fieldname">Protokollant:</div>
-        <Dropdown name="protocoller" options={members} selected_id={3} />
+        <div className="table-fieldname">Moderator*in:</div>
+        <Dropdown name="moderator"  options={members} selected_id={moderator} withDefault={true} 
+                                    onChange={changeModerator} title="Moderator*in auswählen" />
         <div className="table-seperator"></div>
-        <div className="table-fieldname">Moderator:</div>
-        <Dropdown name="moderator" options={members} selected_id={2} />
+        <div className="table-fieldname">Protokollant*in:</div>
+        <Dropdown name="protocoller"  options={members} selected_id={recorder} withDefault={true}
+                                      onChange={changeRecorder} title="Protokollant*in auswählen" />
+        <div className="table-seperator"></div>
+        <div className="table-seperator"></div>
+        <div className="table-seperator"></div>
+        <div className="table-seperator"></div>
+        <div className="table-seperator"></div>
+        <div className="table-seperator"></div>
+        <div className="table-seperator"></div>
+        <div className="table-seperator"></div>
+        <div className="table-seperator"></div>
+        <div className="table-fieldname">Nächste/r:</div>
+        <Dropdown name="moderator"  options={members} selected_id={nextRecorder} withDefault={true} 
+                                    onChange={changeNextRecorder} title="Protokollant*in für nächste Sitzung auswählen" />
       </div>
       <div className="table-col1"></div>
       <div className="table protocol-table2">
         <div className="table-fieldname">Kurzbeschreibung:</div>
-        <div><input type="text"></input></div>
+        <div><input type="text" title="Kurzbeschreibung für Sitzung eintragen"></input></div>
       </div>
 
       <div className="table-col1"></div>

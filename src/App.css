@@ -327,7 +327,7 @@ input .agenda-item {
 
 .protocol-table {
   display: grid;
-  grid-template-columns: 12% 10% 4% 6% 10% 11% 9% 14% 2% 8% 14%;
+  grid-template-columns: 12% 10% 4% 6% 10% 9% 9% 14% 2% 10% 14%;
   max-width: 1384px;
 }
 

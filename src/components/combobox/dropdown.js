@@ -5,7 +5,7 @@ import {
     StyledOption,
 } from "./styles.js";
 
-const Dropdown = ({name, options, selected_id, onChange}) => {
+const Dropdown = ({name, title, options, selected_id, onChange, withDefault}) => {
 
     // the format of the options has to be JSON
     // [{ "id": 1, "value": "value 01"},{ "id": 2, "value": "value 02"}, etc]
@@ -15,7 +15,7 @@ const Dropdown = ({name, options, selected_id, onChange}) => {
     if (typeof options !== "undefined" && options.length > 0) {
         optionsList =   options.map((option) =>
                             <React.Fragment key={option.id}>
-                                <StyledOption>{option.value}</StyledOption>
+                                <StyledOption value={option.id}>{option.value}</StyledOption>
                             </React.Fragment>
                         );
     }
@@ -28,8 +28,18 @@ const Dropdown = ({name, options, selected_id, onChange}) => {
     return (
         <>
             <DropdownWrapper >
-                <StyledSelect   id={name} name={name} value={selected_id}
+                <StyledSelect   id={name} name={name} title={title}
+                                value={typeof withDefault !== "undefined" 
+                                            ? selected_id === -1 
+                                                ?   "DEFAULT"
+                                                :   selected_id
+                                            :   selected_id
+                                        }
                                 onChange={(elem) => selectedChanged(elem)}>
+                    {typeof withDefault !== "undefined"
+                        ?   <StyledOption value="DEFAULT">bitte auswählen</StyledOption>
+                        :   null
+                    }
                     {optionsList}
                 </StyledSelect>
             </DropdownWrapper>
