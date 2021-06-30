@@ -228,10 +228,11 @@ const TopicsList = ({useAuthtoken, onlyOpen, tempData, memberOptions,
                         ?   <div className="responsible agenda-item">{topic.assigned_to_member.last_name}, {topic.assigned_to_member.first_name}</div>
                         :   <div className="responsible agenda-item"></div>
                     :   <div className="agenda-item">
-                            <Dropdown name="begin-meeting" 
+                            <Dropdown name="assigned_to_member" title="Verantwortliche auswählen"
                                 options={memberOptions} 
                                 selected_id={topic.member_assigned}
-                                onChange={(itemNumber) => changeMemberAssigned(topic.order, itemNumber)} />
+                                onChange={(itemNumber) => changeMemberAssigned(topic.order, itemNumber)}
+                                withDefault={true} />
                         </div>
                 }
                 { onlyOpen 
