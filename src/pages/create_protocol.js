@@ -3,7 +3,7 @@ import TopicsList from "../common/topics_list";
 import DatePicker from "react-datepicker";
 import Dropdown from "../components/combobox/dropdown";
 import { gql, useQuery } from '@apollo/client';
-import {AGENDA_SEPARATOR, LINE_SEPARATOR} from "../constants";
+import {AGENDA_SEPARATOR, NEW_AGENDA_SEPARATOR, LINE_SEPARATOR} from "../constants";
 
 
 const CreateProtocol = () => {
@@ -104,6 +104,7 @@ const CreateProtocol = () => {
                         "id": topic ? topic.id : -1,
                         "created": topic ? topic.created : -1,
                         "priority_id": topic ? topic.priority_id : 1,
+                        "priority": topic ? topic.priority : "",
                         "state_id": topic ? topic.state_id : 1,
                         "title": topic ? topic.title : "",
                         "member_assigned": topic ? topic.member_assigned : -1,
@@ -280,14 +281,15 @@ const CreateProtocol = () => {
       </div>
 
       <div className="table-col1"></div>
-      <div className="table agenda-table">
+      <div className="table new-agenda-table">
         <div className="agenda-topic agenda-header">Nr</div>
+        <div className="agenda-topic agenda-header">Prio</div>
         <div className="agenda-topic agenda-header">Inhalt</div>
         <div className="responsible agenda-header">Verantwortliche</div>
         <div className="doing agenda-header center"></div>
         <div className="doing agenda-header center"></div>
         
-        {AGENDA_SEPARATOR}
+        {NEW_AGENDA_SEPARATOR}
         
         <TopicsList useAuthtoken={false} onlyOpen={false} tempData={topicsData} memberOptions={members}
                     onUp={handleUp} onDown={handleDown}

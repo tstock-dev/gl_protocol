@@ -209,6 +209,12 @@ h3.page-sub-header {
   max-width: 1384px;
 }
 
+.new-agenda-table {
+  display: grid;
+  grid-template-columns: 3% 7% 63% 17% 5% 5%;
+  max-width: 1384px;
+}
+
 .agenda-header {
   border-top: 1px solid grey;
   font-size: 18px;
@@ -261,6 +267,14 @@ input .agenda-item {
 }
 
 .agenda-order {
+  font-size: 18px;
+  font-weight: 600;
+  text-align: left;
+}
+
+.agenda-prio {
+  font-size: 18px;
+  font-weight: 600;
   text-align: left;
 }
 

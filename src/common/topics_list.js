@@ -17,6 +17,10 @@ const TopicsList = ({useAuthtoken, onlyOpen, tempData, memberOptions,
                 id
                 title
                 priority_id
+                priority {
+                    id
+                    description
+                }
                 state_id
                 created
                 closed
@@ -82,6 +86,7 @@ const TopicsList = ({useAuthtoken, onlyOpen, tempData, memberOptions,
                                                     "created": topic.created,
                                                     "closed": topic.closed,
                                                     "priority_id": topic.priority_id,
+                                                    "priority": topic.priority,
                                                     "resubmit_date": topic.resubmit_date,
                                                     "state_id": topic.state_id,
                                                     "title": topic.title,
@@ -199,6 +204,7 @@ const TopicsList = ({useAuthtoken, onlyOpen, tempData, memberOptions,
     if (data === null) {
         return <>loading...</>
     } else {
+        console.log(data.topics)
         return data.topics.map((topic) =>
             <React.Fragment key={topic.internalId}>
                 { typeof tempData === "undefined"
@@ -216,6 +222,12 @@ const TopicsList = ({useAuthtoken, onlyOpen, tempData, memberOptions,
                             />
                         </div>
                     :   <div className="agenda-order">{topic.order_text}</div>
+                }
+                { typeof tempData === "undefined"
+                    ?   null
+                    :   topic.id > 0
+                            ?   <div className="agenda-prio">{topic.priority.description}</div>
+                            :   <div className="agenda-prio">01</div>
                 }
                 {topic.id > 0
                     ?   <div className="agenda-topic agenda-item">{topic.title}</div>
