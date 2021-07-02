@@ -29,14 +29,14 @@ const Dropdown = ({name, title, options, selected_id, onChange, withDefault}) =>
         <>
             <DropdownWrapper >
                 <StyledSelect   id={name} name={name} title={title}
-                                value={typeof withDefault !== "undefined" 
+                                value={typeof withDefault !== "undefined"
                                             ? selected_id === -1 
                                                 ?   "DEFAULT"
                                                 :   selected_id
                                             :   selected_id
                                         }
                                 onChange={(elem) => selectedChanged(elem)}>
-                    {typeof withDefault !== "undefined"
+                    {typeof withDefault !== "undefined" && withDefault
                         ?   <StyledOption value="DEFAULT">bitte auswählen</StyledOption>
                         :   null
                     }

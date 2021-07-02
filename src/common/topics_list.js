@@ -4,8 +4,10 @@ import Dropdown from "../components/combobox/dropdown";
 import { useMutation, gql, useApolloClient } from '@apollo/client';
 import { AUTH_TOKEN, USE_AUTH_TOKEN } from '../constants';
 
-const TopicsList = ({useAuthtoken, onlyOpen, tempData, memberOptions, 
-                     onTakeIt, onUp, onDown, onChangeTitle, onChangeMember}) => {
+const TopicsList = ({useAuthtoken, onlyOpen, tempData, 
+                     memberOptions, priorityOptions, 
+                     onTakeIt, onUp, onDown, 
+                     onChangeTitle, onChangeMember, onChangePriority}) => {
     const client = useApolloClient();
     const [ data, setData ] = useState(null);
     const [ loading, setLoading ] = useState(false);
@@ -197,14 +199,20 @@ const TopicsList = ({useAuthtoken, onlyOpen, tempData, memberOptions,
             onChangeMember(orderId, itemNumber);
     }
 
-    
+    const changePriority = (orderId, itemNumber) => {
+        if (typeof onChangePriority !== "undefined") {
+            // + 1 because in the list is no DEFAULT value on position 0
+            onChangePriority(orderId, itemNumber + 1);
+        }
+    }
+
     if (loading) return <p>Loading...</p>;
     if (error) return <p>Error :(</p>;
 
     if (data === null) {
         return <>loading...</>
     } else {
-        console.log(data.topics)
+        //console.log(data.topics)
         return data.topics.map((topic) =>
             <React.Fragment key={topic.internalId}>
                 { typeof tempData === "undefined"
@@ -227,7 +235,13 @@ const TopicsList = ({useAuthtoken, onlyOpen, tempData, memberOptions,
                     ?   null
                     :   topic.id > 0
                             ?   <div className="agenda-prio">{topic.priority.description}</div>
-                            :   <div className="agenda-prio">01</div>
+                            :   <div className="agenda-prio">
+                                    <Dropdown   name="priority" title="Priorität auswählen"
+                                                options={priorityOptions} 
+                                                selected_id={topic.priority_id}
+                                                onChange={(itemNumber) => changePriority(topic.order, itemNumber)}
+                                                withDefault={false} />
+                                </div>
                 }
                 {topic.id > 0
                     ?   <div className="agenda-topic agenda-item">{topic.title}</div>

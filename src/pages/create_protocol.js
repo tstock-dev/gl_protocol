@@ -17,12 +17,23 @@ const CreateProtocol = () => {
         }
     `;
 
+  const PRIORITIES_QUERY = gql`
+    query getAllPriorities {
+        priorities {
+            id
+            description
+        }
+    }
+`;
+
   const { loading, error, data } = useQuery(MEMBERS_QUERY);
+  const { loading : prioLoading, _, data : priorityData } = useQuery(PRIORITIES_QUERY);
 
   const [ date, setDate ] = useState(new Date());
   const [ topicsData, setTopicsData ] = useState({"topics": []});
   const [ elements, setElements ] = useState(0);
   const [ members, setMembers ] = useState({});
+  const [ priorities, setPriorities ] = useState({});
   const [ beginTimes, setBeginTimes ] = useState([]);
   const [ endTimes, setEndTimes ] = useState([]);
   const [ moderator, setModerator ] = useState(-1);
@@ -45,6 +56,17 @@ const CreateProtocol = () => {
       setEndTimes(createTimesForOptions(endOptions, 1, 19, 0));
     }
   }, [loading, data])
+
+  useEffect(() => { 
+    if(prioLoading === false && priorityData) {
+      let priorityOptions = [];
+      priorityData.priorities.forEach(element => {
+        priorityOptions.push({"id": element.id, "value": element.description});
+      });
+      setPriorities(priorityOptions);
+    }
+
+  }, [prioLoading, priorityData])
 
   const createTimesForOptions = (options, startFactor, maxHour, maxMinute) => {
     // get starting time by factor
@@ -195,6 +217,19 @@ const CreateProtocol = () => {
     setElements(-1 * elements);
   }
 
+  const handleChangePriority = (orderId, value) => {
+    let tempData = topicsData;
+    // update data in cache.
+    tempData.topics.forEach((topic) => {
+        if (topic.order === orderId) {
+            //console.log(topic.priority_id, value);
+            topic.priority_id = value;
+        }
+    });
+    setTopicsData(tempData);
+    setElements(-1 * elements);
+  }
+
   if (loading) return "Loading...";
   if (error) return "Error! {error.message}";
 
@@ -291,9 +326,11 @@ const CreateProtocol = () => {
         
         {NEW_AGENDA_SEPARATOR}
         
-        <TopicsList useAuthtoken={false} onlyOpen={false} tempData={topicsData} memberOptions={members}
+        <TopicsList useAuthtoken={false} onlyOpen={false} tempData={topicsData} 
+                    memberOptions={members} priorityOptions={priorities}
                     onUp={handleUp} onDown={handleDown}
-                    onChangeTitle={handleChangeTitle} onChangeMember={handleChangeMember} />
+                    onChangeTitle={handleChangeTitle} onChangeMember={handleChangeMember}
+                    onChangePriority={handleChangePriority} />
       </div>
 
       <div className="table-col1"></div>
