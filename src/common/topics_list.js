@@ -160,11 +160,13 @@ const TopicsList = ({useAuthtoken, onlyOpen, tempData,
     };
 
     const clickDoing = (topicId) => {
-        setStateInDB(topicId, 2);
+        if (useAuthtoken)
+            setStateInDB(topicId, 2);
     };
     
     const clickClosed = (topicId) => {
-        setStateInDB(topicId, 4);
+        if (useAuthtoken)
+            setStateInDB(topicId, 4);
     };
 
     const clickTakeIt = (topicId) => {

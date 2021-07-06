@@ -36,11 +36,7 @@ const AllTopics = () => {
       <div className="page-header-seperator-col2"></div>
 
       <div className="table agenda-table">
-        <div className="resubmission agenda-header">Historie</div>
-        <div className="agenda-topic agenda-header">Inhalt</div>
-        <div className="responsible agenda-header">Verantwortliche</div>
-        <div className="doing agenda-header center">Doing</div>
-        <div className="done agenda-header center">Done</div>
+        <div className="agenda-header centered">Historie</div>
         
         {AGENDA_SEPARATOR}
 

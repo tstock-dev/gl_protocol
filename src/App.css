@@ -160,7 +160,7 @@
 }
 
 .page-header h2 {
-  font-size: 48px;
+  font-size: 36px;
   line-height: 60px;
   margin: 0 0 25px 0;
   font-weight: 700;
@@ -171,7 +171,7 @@
 }
 
 h3.page-sub-header {
-  font-size: 28px;
+  font-size: 26px;
   line-height: 36px;
   margin-bottom: 5px;
   float: left;
@@ -225,9 +225,17 @@ h3.page-sub-header {
 
 .agenda-header {
   border-top: 1px solid grey;
-  font-size: 18px;
+  font-size: 16px;
   font-weight: 600;
   text-align: left;
+}
+
+.agenda-header.centered {
+  border-top: 1px solid grey;
+  font-size: 16px;
+  font-weight: 600;
+  grid-column: 1 / span 5;
+  text-align: center;
 }
 
 .agenda-header.center {
@@ -248,7 +256,7 @@ h3.page-sub-header {
 }
 
 .agenda-item {
-  font-size: 18px;
+  font-size: 16px;
   font-weight: 600;
   margin-bottom: 2px;
   max-height: 32px;
@@ -267,7 +275,7 @@ input .agenda-item {
 .agenda-date {
   border: 1px solid grey;
   border-radius: 10px;
-  font-size: 18px;
+  font-size: 16px;
   font-weight: 600;
   margin-right: 15px;
   text-align: center;
