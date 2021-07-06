@@ -36,10 +36,10 @@ function App() {
 
   return (
     <div className="App">
-      <div className="App-layout">
-        <div className="App-layout-left"></div>
-        <div className="App-layout-middle">
-          <Router>
+      <Router>
+        <div className="App-Header-Layout">
+          <div className="App-Header-Layout-left"></div>
+          <div className="App-Header-Layout-middle">
             <header className="App-header">
               <div className="App-container">
                 <div className="site-branding">
@@ -61,7 +61,7 @@ function App() {
                               <img alt="logged out" src={LoggedOut} width="40" height="40" ></img>
                             </Link>
                           : <a className="header-user-icon" href="/" title="hier klicken um auzuloggen"
-                                 onClick={() => logoutUser() }>
+                                  onClick={() => logoutUser() }>
                               <img alt="logged in" src={LoggedIn} width="40" height="40" ></img>
                             </a>
                         }
@@ -73,8 +73,8 @@ function App() {
                           <div className="menu-container">
                             <ul className="menu">
                               <li className="menu-item">
-                                <Link to="/myTopics">
-                                  Meine
+                                <Link to="/allTopics">
+                                  Alle
                                   <br />
                                   Agenda-Punkte
                                 </Link>
@@ -86,8 +86,8 @@ function App() {
                           <div className="menu-container">
                             <ul className="menu">
                               <li className="menu-item">
-                                <Link to="/allTopics">
-                                  Alle
+                                <Link to="/myTopics">
+                                  Meine
                                   <br />
                                   Agenda-Punkte
                                 </Link>
@@ -140,34 +140,37 @@ function App() {
                 </div>
               </div>
             </header>
-            <div id="content" className="site-content rot">
-              <Switch>
-                <Route exact path="/">
-                  <Home />
-                </Route>
-                <Route exact path="/login">
-                  <Login />
-                </Route>
-                <Route path="/myTopics">
-                  <MyTopics />
-                </Route>
-                <Route path="/allTopics">
-                  <AllTopics />
-                </Route>
-                <Route path="/createAgenda">
-                  <CreateAgenda />
-                </Route>
-                <Route path="/createProtocol">
-                  <CreateProtocol />
-                </Route>
-                <Route path="/searchProtocol">
-                  <SearchProtocol />
-                </Route>
-              </Switch>
-            </div>
-          </Router>
+          </div>
         </div>
-      </div>
+        <div className="App-Content-Layout">
+          <div className="App-Content-Layout-left"></div>
+          <div id="content" className="site-content rot">
+            <Switch>
+              <Route exact path="/">
+                <Home />
+              </Route>
+              <Route exact path="/login">
+                <Login />
+              </Route>
+              <Route path="/myTopics">
+                <MyTopics />
+              </Route>
+              <Route path="/allTopics">
+                <AllTopics />
+              </Route>
+              <Route path="/createAgenda">
+                <CreateAgenda />
+              </Route>
+              <Route path="/createProtocol">
+                <CreateProtocol />
+              </Route>
+              <Route path="/searchProtocol">
+                <SearchProtocol />
+              </Route>
+            </Switch>
+          </div>
+        </div>
+      </Router>
     </div>
   );
 }

@@ -16,7 +16,7 @@
   }
 }
 
-.App-layout {
+.App-Header-Layout {
   display: grid;
   grid-template-columns: auto 1300px auto;
   grid-template-rows: auto;
@@ -133,6 +133,14 @@
 
 .App-link {
   color: #61dafb;
+}
+
+.App-Content-Layout {
+  display: grid;
+  grid-template-columns: auto 90% auto;
+  grid-template-rows: auto;
+  -webkit-box-shadow: 0px 3px 15px 0 rgba(0, 0, 0, 0.25);
+  box-shadow: 0px 3px 15px 0 rgba(0, 0, 0, 0.25);
 }
 
 .site-content, section {
