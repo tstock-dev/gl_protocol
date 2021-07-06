@@ -94,10 +94,11 @@ const TopicsList = ({useAuthtoken, onlyOpen, tempData,
                                                     "title": topic.title,
                                                     "assigned_to_member": topic.assigned_to_member,
                                                     "used_protocol_id": -1
-                                                }
+                                                };
                                 newData.topics.push(newTopic);
                             }
                         });
+                        newData.topics = newData.topics.sort((a, b) => a.resubmit_date > b.resubmit_date ? 1 : -1)
                         setData(newData);
                     })
                     .catch((err) => {
