@@ -145,7 +145,7 @@
 
 .site-content, section {
   display: grid;
-  grid-template-columns: 25px auto;
+  grid-template-columns: 48% 4% 48%;
   grid-template-rows: 60px auto;
 }
 
@@ -213,7 +213,7 @@ h3.page-sub-header {
 
 .agenda-table {
   display: grid;
-  grid-template-columns: 10% 63% 17% 5% 5%;
+  grid-template-columns: 12% 50% 24% 7% 7%;
   max-width: 1384px;
 }
 
