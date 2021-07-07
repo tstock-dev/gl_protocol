@@ -223,6 +223,12 @@ h3.page-sub-header {
   max-width: 1384px;
 }
 
+.agenda-history-table {
+  display: grid;
+  grid-template-columns: 13% 73% 14%;
+  max-width: 1384px;
+}
+
 .agenda-header {
   border-top: 1px solid grey;
   font-size: 16px;
@@ -235,6 +241,23 @@ h3.page-sub-header {
   font-size: 16px;
   font-weight: 600;
   grid-column: 1 / span 5;
+  text-align: center;
+}
+
+.agenda-history-header {
+  font-size: 16px;
+  font-weight: 600;
+  max-height: 0px;
+  text-align: center;
+}
+
+.agenda-history-header.centered {
+  border-top: 1px solid grey;
+  color: #A6002A;
+  font-size: 20px;
+  font-weight: 600;
+  grid-column: 1 / span 3;
+  max-height: 0px;
   text-align: center;
 }
 
@@ -316,6 +339,30 @@ input .agenda-item {
 
 .agenda-button.checked:before {
   content: "✔";
+}
+
+.agenda-history-date {
+  border: 1px solid grey;
+  border-radius: 10px;
+  font-size: 16px;
+  font-weight: 600;
+  margin-right: 15px;
+  max-height: 29px;
+  text-align: center;
+  width: 90%;
+}
+
+.agenda-history-note {
+  font-size: 16px;
+  font-weight: 600;
+  margin-right: 5px;
+  text-align: left;
+}
+
+.agenda-history-responsible {
+  font-size: 16px;
+  font-weight: 600;
+  margin-right: 5px;
 }
 
 .action-button {

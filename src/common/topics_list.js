@@ -6,7 +6,7 @@ import { AUTH_TOKEN, USE_AUTH_TOKEN } from '../constants';
 
 const TopicsList = ({useAuthtoken, onlyOpen, tempData, 
                      memberOptions, priorityOptions, 
-                     onTakeIt, onUp, onDown, 
+                     onTakeIt, onUp, onDown, onRowClick, 
                      onChangeTitle, onChangeMember, onChangePriority}) => {
     const client = useApolloClient();
     const [ data, setData ] = useState(null);
@@ -159,14 +159,23 @@ const TopicsList = ({useAuthtoken, onlyOpen, tempData,
         setData(topicsData);
     };
 
+    const clickRow = (topicId) => {
+        if (typeof onRowClick !== "undefined")
+            onRowClick(topicId);
+    }
+
     const clickDoing = (topicId) => {
         if (useAuthtoken)
             setStateInDB(topicId, 2);
+        else if (typeof onRowClick !== "undefined")
+            onRowClick(topicId);
     };
     
     const clickClosed = (topicId) => {
         if (useAuthtoken)
             setStateInDB(topicId, 4);
+        else if (typeof onRowClick !== "undefined")
+            onRowClick(topicId);
     };
 
     const clickTakeIt = (topicId) => {
@@ -226,6 +235,7 @@ const TopicsList = ({useAuthtoken, onlyOpen, tempData,
                                 dateFormat="dd.MM.yyyy"
                                 locale="de"
                                 name="startDate"
+                                onClick={() => clickRow(topic.id)}
                                 onChange={(date) => setResubmitDateInDB(topic.id, date)}
                                 selected={Date.parse(topic.resubmit_date)}
                                 showWeekNumbers={true}
@@ -237,7 +247,7 @@ const TopicsList = ({useAuthtoken, onlyOpen, tempData,
                 { typeof tempData === "undefined"
                     ?   null
                     :   topic.id > 0
-                            ?   <div className="agenda-prio">{topic.priority.description}</div>
+                            ?   <div className="agenda-prio" onClick={() => clickRow(topic.id)}>{topic.priority.description}</div>
                             :   <div className="agenda-prio">
                                     <Dropdown   name="priority" title="Priorität auswählen"
                                                 options={priorityOptions} 
@@ -247,15 +257,15 @@ const TopicsList = ({useAuthtoken, onlyOpen, tempData,
                                 </div>
                 }
                 {topic.id > 0
-                    ?   <div className="agenda-topic agenda-item">{topic.title}</div>
+                    ?   <div className="agenda-topic agenda-item" onClick={() => clickRow(topic.id)}>{topic.title}</div>
                     :   <input  className="agenda-topic agenda-item"
                                 type="text" value={topic.title} 
                                 onChange={(obj) => changeTitle(topic.order, obj)}></input>
                 }
                 {topic.id > 0
                     ?   topic.assigned_to_member
-                        ?   <div className="responsible agenda-item">{topic.assigned_to_member.last_name}, {topic.assigned_to_member.first_name}</div>
-                        :   <div className="responsible agenda-item"></div>
+                        ?   <div className="responsible agenda-item" onClick={() => clickRow(topic.id)}>{topic.assigned_to_member.last_name}, {topic.assigned_to_member.first_name}</div>
+                        :   <div className="responsible agenda-item" onClick={() => clickRow(topic.id)}></div>
                     :   <div className="agenda-item">
                             <Dropdown name="assigned_to_member" title="Verantwortliche auswählen"
                                 options={memberOptions} 

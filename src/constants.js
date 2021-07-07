@@ -7,6 +7,11 @@ export const AGENDA_SEPARATOR =
         <div className="agenda-separator" /><div className="agenda-separator" />
     </>;
 
+export const AGENDA_HISTORY_SEPARATOR = 
+    <>
+        <div className="agenda-separator" /><div className="agenda-separator" /><div className="agenda-separator" />
+    </>;
+
 export const NEW_AGENDA_SEPARATOR = 
     <>
         <div className="agenda-separator" /><div className="agenda-separator" /><div className="agenda-separator" />
