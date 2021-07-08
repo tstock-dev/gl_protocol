@@ -37,8 +37,6 @@ const AllTopics = () => {
     setTopicHistoryId(1 * topicId);
   }
 
-  console.log(data);
-
   return (
     <>
       <div className="page-header-seperator-col1"></div>

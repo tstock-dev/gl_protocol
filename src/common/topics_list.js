@@ -224,7 +224,7 @@ const TopicsList = ({useAuthtoken, onlyOpen, tempData,
     if (data === null) {
         return <>loading...</>
     } else {
-        //console.log(data.topics)
+        let onlyShowData = typeof onRowClick != "undefined";
         return data.topics.map((topic) =>
             <React.Fragment key={topic.internalId}>
                 { typeof tempData === "undefined"
@@ -249,7 +249,7 @@ const TopicsList = ({useAuthtoken, onlyOpen, tempData,
                     :   topic.id > 0
                             ?   <div className="agenda-prio" onClick={() => clickRow(topic.id)}>{topic.priority.description}</div>
                             :   <div className="agenda-prio">
-                                    <Dropdown   name="priority" title="Priorität auswählen"
+                                    <Dropdown   name="priority" title={onlyShowData ? "klicken, um Historie anzuzeigen" : "Priorität auswählen"}
                                                 options={priorityOptions} 
                                                 selected_id={topic.priority_id}
                                                 onChange={(itemNumber) => changePriority(topic.order, itemNumber)}
@@ -257,21 +257,25 @@ const TopicsList = ({useAuthtoken, onlyOpen, tempData,
                                 </div>
                 }
                 {topic.id > 0
-                    ?   <div className="agenda-topic agenda-item" onClick={() => clickRow(topic.id)}>{topic.title}</div>
+                    ?   <div className="agenda-topic agenda-item" onClick={() => clickRow(topic.id)}
+                            title="klicken, um Historie anzuzeigen">{topic.title}</div>
                     :   <input  className="agenda-topic agenda-item"
                                 type="text" value={topic.title} 
                                 onChange={(obj) => changeTitle(topic.order, obj)}></input>
                 }
                 {topic.id > 0
                     ?   topic.assigned_to_member
-                        ?   <div className="responsible agenda-item" onClick={() => clickRow(topic.id)}>{topic.assigned_to_member.last_name}, {topic.assigned_to_member.first_name}</div>
-                        :   <div className="responsible agenda-item" onClick={() => clickRow(topic.id)}></div>
+                        ?   <div className="responsible agenda-item" onClick={() => clickRow(topic.id)}
+                                 title="klicken, um Historie anzuzeigen">{topic.assigned_to_member.last_name}, {topic.assigned_to_member.first_name}</div>
+                        :   <div className="responsible agenda-item" onClick={() => clickRow(topic.id)}
+                                 title="klicken, um Historie anzuzeigen"></div>
                     :   <div className="agenda-item">
-                            <Dropdown name="assigned_to_member" title="Verantwortliche auswählen"
-                                options={memberOptions} 
-                                selected_id={topic.member_assigned}
-                                onChange={(itemNumber) => changeMemberAssigned(topic.order, itemNumber)}
-                                withDefault={true} />
+                            <Dropdown   name="assigned_to_member" 
+                                        title={onlyShowData ? "klicken, um Historie anzuzeigen" : "Verantwortliche auswählen"}
+                                        options={memberOptions} 
+                                        selected_id={topic.member_assigned}
+                                        onChange={(itemNumber) => changeMemberAssigned(topic.order, itemNumber)}
+                                        withDefault={true} />
                         </div>
                 }
                 { onlyOpen 
@@ -283,17 +287,20 @@ const TopicsList = ({useAuthtoken, onlyOpen, tempData,
                                                 onClick={() => clickUp(topic.internalId)} title='klicken, um nach oben zu bewegen'></button>
                                     :   <div></div>
                             :   <button className={"doing agenda-button" + (topic.state_id === 2 ? " checked" : "")}
-                                        onClick={() => clickDoing(topic.id)} title='klicken, um auf "in Bearbeitung" umzustellen'></button>
+                                        onClick={() => clickDoing(topic.id)}
+                                        title={onlyShowData ? "klicken, um Historie anzuzeigen" : 'klicken, um auf "in Bearbeitung" umzustellen'}></button>
                 }
                 { onlyOpen 
                     ?   <div></div>
                     :   "order" in topic
                             ?   topic.order < data.topics.length
                                     ?   <button className="down agenda-button checked"
-                                                onClick={() => clickDown(topic.internalId)} title='klicken, um nach unten zu bewegen'></button>
+                                                onClick={() => clickDown(topic.internalId)} 
+                                                title={onlyShowData ? "klicken, um Historie anzuzeigen" : 'klicken, um nach unten zu bewegen'}></button>
                                     :   <div></div>
                             :   <button className={"done agenda-button" + (topic.state_id === 4 ? " checked" : "")}
-                                        onClick={() => clickClosed(topic.id)} title='klicken, um auf "Erledigt" umzustellen'></button>
+                                        onClick={() => clickClosed(topic.id)} 
+                                        title={onlyShowData ? "klicken, um Historie anzuzeigen" : 'klicken, um auf "Erledigt" umzustellen'}></button>
                 }
             </React.Fragment>
         );
