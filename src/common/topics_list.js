@@ -229,18 +229,25 @@ const TopicsList = ({useAuthtoken, onlyOpen, tempData,
             <React.Fragment key={topic.internalId}>
                 { typeof tempData === "undefined"
                     ?   <div>
-                            <DatePicker
-                                className="resubmission agenda-date"
-                                closeOnScroll={true}
-                                dateFormat="dd.MM.yyyy"
-                                locale="de"
-                                name="startDate"
-                                onClick={() => clickRow(topic.id)}
-                                onChange={(date) => setResubmitDateInDB(topic.id, date)}
-                                selected={Date.parse(topic.resubmit_date)}
-                                showWeekNumbers={true}
-                                todayButton="Heute"
-                            />
+                            {useAuthtoken 
+                                ?   <div className="resubmission agenda-date">
+                                         {topic.resubmit_date.substring(8,10) + "." +
+                                          topic.resubmit_date.substring(5,7) + "." + 
+                                          topic.resubmit_date.substring(0,4)}
+                                    </div>
+                                :   <DatePicker
+                                        className="resubmission agenda-date"
+                                        closeOnScroll={true}
+                                        dateFormat="dd.MM.yyyy"
+                                        locale="de"
+                                        name="startDate"
+                                        onClick={() => clickRow(topic.id)}
+                                        onChange={(date) => setResubmitDateInDB(topic.id, date)}
+                                        selected={Date.parse(topic.resubmit_date)}
+                                        showWeekNumbers={true}
+                                        todayButton="Heute"
+                                    />
+                            }
                         </div>
                     :   <div className="agenda-order">{topic.order_text}</div>
                 }

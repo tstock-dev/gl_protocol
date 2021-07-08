@@ -217,6 +217,15 @@ h3.page-sub-header {
   max-width: 1384px;
 }
 
+.my-agenda-table-content {
+  grid-column: 1 / span 3;
+}
+
+.my-agenda-table {
+  display: grid;
+  grid-template-columns: 25% 50% 25%;
+}
+
 .new-agenda-table {
   display: grid;
   grid-template-columns: 3% 7% 63% 17% 5% 5%;
