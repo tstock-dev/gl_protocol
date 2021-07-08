@@ -8,18 +8,22 @@ const TopicHistoryList = ({loading, error, topicsHistoryData}) => {
     if (topicsHistoryData === null) {
         return <>loading...</>
     } else {
-        //console.log(data.topics)
-        return topicsHistoryData.topic_history.map((topic) =>
-            <React.Fragment key={topic.id}>
-                <div className="agenda-history-date">{topic.protocol_date.substring(8,10) + "." +
-                                                      topic.protocol_date.substring(5,7) + "." + 
-                                                      topic.protocol_date.substring(0,4)}</div>
-                <div className="agenda-history-note">{topic.note}</div>
-                {topic.assigned_to_member
-                    ?   <div className="agenda-history-responsible">{topic.assigned_to_member.combined_name}</div>
-                    :   <div className="agenda-history-responsible"></div>
-                }
-            </React.Fragment>
+        return topicsHistoryData.topic_history.map((topic, index) =>
+            <li className="agenda-history-item" key={topic.id}>
+                <div className={"agenda-history-date" + (index > 0 ? " agenda-history-line" : "")}>
+                    {topic.protocol_date.substring(8,10) + "." +
+                    topic.protocol_date.substring(5,7) + "." + 
+                    topic.protocol_date.substring(0,4)}</div>
+                <div className={"agenda-history-note" + (index > 0 ? " agenda-history-line" : "")}>
+                    {topic.note}
+                </div>
+                <div className={"agenda-history-responsible" + (index > 0 ? " agenda-history-line" : "")}>
+                    {topic.assigned_to_member
+                        ?   topic.assigned_to_member.combined_name
+                        :   null
+                    }
+                </div>
+            </li>
         );
     }
 

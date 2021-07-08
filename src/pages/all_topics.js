@@ -64,18 +64,24 @@ const AllTopics = () => {
       
       <div className="page-header-seperator-col2"></div>
 
-      <div className="table agenda-history-table">
-        <div className="date agenda-history-header centered">Historie</div>
+      <div className="page-content-right">
+        <div className="table agenda-history-table">
+          <div className="date agenda-history-header centered">Historie</div>
+          {data && data.topic_history.length > 0
+            ? <>
+                <div className="date agenda-history-header">Datum</div>
+                <div className="note agenda-history-header">Notiz</div>
+                <div className="responsible agenda-history-header">Verantwortliche</div>
+
+                {AGENDA_HISTORY_SEPARATOR}
+              </>
+            : null
+          }
+        </div>
         {data && data.topic_history.length > 0
-          ? <>
-              <div className="date agenda-history-header">Datum</div>
-              <div className="note agenda-history-header">Notiz</div>
-              <div className="responsible agenda-history-header">Verantwortliche</div>
-
-              {AGENDA_HISTORY_SEPARATOR}
-
+          ? <ul className="agenda-history-list">
               <TopicHistoryList loading={loading} error={error} topicsHistoryData={data} />
-            </>
+            </ul>
           : null
         }
       </div>
