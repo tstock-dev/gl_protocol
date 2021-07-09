@@ -137,16 +137,21 @@ const TopicsList = ({useAuthtoken, onlyOpen, topicsData, isNormalList,
     };
 
     const clickTakeIt = (topicId) => {
-        // update the flag of taken it
-        let tempTopicsData = data;
-        tempTopicsData.topics.forEach((topic) => {
-            if (topic.id === topicId) {
-                if (typeof onTakeIt !== "undefined")
-                    onTakeIt(topic);
-                topic.used_protocol_id = 0;
-            }
-        })
-        setData(tempTopicsData);
+        let onlyShowData = typeof onRowClick != "undefined";
+        if (!onlyShowData) {
+            // update the flag of taken it
+            let tempTopicsData = data;
+            tempTopicsData.topics.forEach((topic) => {
+                if (topic.id === topicId) {
+                    if (typeof onTakeIt !== "undefined")
+                        onTakeIt(topic);
+                    topic.used_protocol_id = 0;
+                }
+            })
+            setData(tempTopicsData);
+        } else {
+            onRowClick(topicId);
+        }
     }
 
     const clickUp = (topicId) => {
@@ -183,7 +188,6 @@ const TopicsList = ({useAuthtoken, onlyOpen, topicsData, isNormalList,
         return <>loading...</>
     } else {
         let onlyShowData = typeof onRowClick != "undefined";
-        console.log(data.topics);
         return data.topics.map((topic) =>
             <React.Fragment key={topic.internalId}>
                 { typeof topicsData === "undefined" || isNormalList
@@ -249,9 +253,10 @@ const TopicsList = ({useAuthtoken, onlyOpen, topicsData, isNormalList,
                                         withDefault={true} />
                         </div>
                 }
-                { onlyOpen 
+                { onlyOpen && !isNormalList
                     ?   <button className={"doing agenda-button" + (topic.used_protocol_id !== -1 ? " checked" : "")}
-                                onClick={() => clickTakeIt(topic.id)} title="klicken, um diesen offenen Agenda-Punkt ins Protokoll auzunehmen"></button>
+                                onClick={() => clickTakeIt(topic.id)} 
+                                title={onlyShowData ? "klicken, um Historie anzuzeigen" : "klicken, um diesen offenen Agenda-Punkt ins Protokoll auzunehmen"}></button>
                     :   "order" in topic
                             ?   topic.order > 1 && !isNormalList
                                     ?   <button className="up agenda-button checked"

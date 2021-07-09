@@ -221,6 +221,11 @@ h3.page-sub-header {
   grid-column: 1 / span 3;
 }
 
+.agenda-selector-table {
+  display: grid;
+  grid-template-columns: 20% 73% 7%;
+}
+
 .my-agenda-table {
   display: grid;
   grid-template-columns: 14% 68% 14%;

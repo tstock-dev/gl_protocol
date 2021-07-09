@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback } from "react";
 import TopicsList from "../common/topics_list";
 import TopicHistoryList from "../common/topic_history_list";
+import Dropdown from "../components/combobox/dropdown";
 import { registerLocale } from "react-datepicker";
 import { useQuery, useApolloClient } from '@apollo/client';
 import {AGENDA_SEPARATOR, AGENDA_HISTORY_SEPARATOR} from "../constants";
@@ -18,10 +19,13 @@ const AllTopics = () => {
   const [ loading, setLoading ] = useState(false);
   const [ error, setError ] = useState(false);
   const [ topicsData, setTopicsData ] = useState({"topics": []});
+  const [ allTopicsData, setAllTopicsData ] = useState({"topics": []});
   const [ topicHistoryId, setTopicHistoryId ] = useState(-1);
   const [ elements, setElements ] = useState(0);
   const [ members, setMembers ] = useState({});
   const [ priorities, setPriorities ] = useState({});
+  const [ modes, setModes ] = useState({});
+  const [ mode, setMode ] = useState(0);
 
   const { loading : historyLoading, error : historyError, data : historyData } = useQuery(GET_TOPIC_HISTORY, {
     variables: { topicId: topicHistoryId },
@@ -58,7 +62,7 @@ const AllTopics = () => {
                   newData.topics.push(newTopic);
                 });
                     newData.topics = newData.topics.sort((a, b) => a.resubmit_date > b.resubmit_date ? 1 : -1)
-                    setTopicsData(newData);
+                    setAllTopicsData(newData);
                 })
                 .catch((err) => {
                     setError(err);
@@ -70,7 +74,12 @@ const AllTopics = () => {
   }, [client, loading]);
 
   useEffect(() => { 
-      loadTopicList();
+    loadTopicList();
+    // define modes
+    let modeOptions = [];
+    modeOptions.push({"id": 1, "value": "nur offene Punkte"});
+    modeOptions.push({"id": 2, "value": "alle Punkte"});
+    setModes(modeOptions);
   }, [loadTopicList]); 
 
   useEffect(() => { 
@@ -81,8 +90,37 @@ const AllTopics = () => {
       });
       setMembers(memberOptions);
     }
-
   }, [membersLoading, membersError, memberData])
+
+  useEffect(() => {
+    if (allTopicsData.topics.length > 0) {
+      if (mode == 0) {
+        let tempTopicsData = {"topics": []};
+        allTopicsData.topics.forEach((topic) => {
+          if (topic.state_id < 4)
+          {
+            let newTopic = {"internalId": tempTopicsData.topics.length,
+                            "id": topic.id,
+                            "created": topic.created,
+                            "closed": topic.closed,
+                            "priority_id": topic.priority_id,
+                            "priority": topic.priority,
+                            "resubmit_date": topic.resubmit_date,
+                            "state_id": topic.state_id,
+                            "title": topic.title,
+                            "assigned_to_member": topic.assigned_to_member,
+                            "used_protocol_id": -1
+                            };
+            tempTopicsData.topics.push(newTopic);
+          }
+        });
+        setTopicsData(tempTopicsData);
+        console.log(tempTopicsData);
+      } else
+        setTopicsData(allTopicsData);
+    } else
+      setTopicsData(allTopicsData);
+  }, [allTopicsData, mode]);
 
   useEffect(() => { 
     if(prioLoading === false && priorityData) {
@@ -92,8 +130,13 @@ const AllTopics = () => {
       });
       setPriorities(priorityOptions);
     }
-
   }, [prioLoading, priorityData])
+
+
+
+  const changeMode = (modeId) => {
+    setMode(modeId);
+  }
 
   const handleRowClick = (topicId) => {
     setTopicHistoryId(1 * topicId);
@@ -178,10 +221,18 @@ const AllTopics = () => {
       <div className="page-header-seperator-col3"></div>
       <div className="page-header">
         <h2>Alle Agenda-Punkte</h2>
-        <button className="page-header-protocol-save-btn plus agenda-button"
-              onClick={() => clickPlus()} 
-              title="klicken, um neuen Eintrag zu erstellen">
-        </button>
+        <div className="agenda-selector-table">
+          <Dropdown   name="mode" title="Modus auswählen"
+                      options={modes} 
+                      selected_id={mode}
+                      onChange={(itemNumber) => changeMode(itemNumber)}
+                      withDefault={false} />
+          <div className="page-header-seperator-col2"></div>
+          <button className="page-header-protocol-save-btn plus agenda-button"
+                onClick={() => clickPlus()} 
+                title="klicken, um neuen Eintrag zu erstellen">
+          </button>
+        </div>
       </div>
       <div className="page-header-seperator-col2"></div>
       <div className="page-header-seperator-col3"></div>
@@ -195,7 +246,7 @@ const AllTopics = () => {
         
         {AGENDA_SEPARATOR}
 
-        <TopicsList useAuthtoken={false} onlyOpen={false} topicsData={topicsData} 
+        <TopicsList useAuthtoken={false} onlyOpen={mode === 0} topicsData={topicsData} 
                     isNormalList={true}
                     memberOptions={members} priorityOptions={priorities}
                     onChangeTitle={handleChangeTitle} onChangeMember={handleChangeMember}

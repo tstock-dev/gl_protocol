@@ -30,27 +30,35 @@ const Dropdown = ({name, title, options, selected_id, onChange, onClick, withDef
             onClick(element.target);
     }
 
-    return (
-        <>
-            <DropdownWrapper onClick={(elem) => handleClick(elem)}>
-                <StyledSelect   id={name} name={name} title={title}
-                                value={typeof withDefault !== "undefined"
-                                            ? selected_id === -1 
-                                                ?   "DEFAULT"
-                                                :   selected_id
-                                            :   selected_id
-                                        }
-                                onChange={(elem) => selectedChanged(elem)}>
-                    {typeof withDefault !== "undefined" && withDefault
-                        ?   <StyledOption value="DEFAULT">bitte auswählen</StyledOption>
-                        :   null
-                    }
-                    {optionsList}
-                </StyledSelect>
-            </DropdownWrapper>
-        </>
-    );
-
+    if (typeof withDefault !== "undefined" && withDefault) {
+        return (
+            <>
+                <DropdownWrapper onClick={(elem) => handleClick(elem)}>
+                    <StyledSelect   id={name} name={name} title={title}
+                                    selectedIndex={selected_id === -1 
+                                                        ?   "DEFAULT"
+                                                        :   selected_id
+                                                }
+                                    onChange={(elem) => selectedChanged(elem)}>
+                        <StyledOption value="DEFAULT">bitte auswählen</StyledOption>
+                        {optionsList}
+                    </StyledSelect>
+                </DropdownWrapper>
+            </>
+        );
+    } else {
+        return (
+            <>
+                <DropdownWrapper onClick={(elem) => handleClick(elem)}>
+                    <StyledSelect   id={name} name={name} title={title}
+                                    selectedIndex={selected_id}
+                                    onChange={(elem) => selectedChanged(elem)}>
+                        {optionsList}
+                    </StyledSelect>
+                </DropdownWrapper>
+            </>
+        );
+    }
 };
 
 export default Dropdown;
