@@ -1,10 +1,11 @@
 import React, { useEffect, useState, useCallback } from "react";
 import DatePicker from "react-datepicker";
 import Dropdown from "../components/combobox/dropdown";
-import { useMutation, gql, useApolloClient } from '@apollo/client';
-import { AUTH_TOKEN, USE_AUTH_TOKEN } from '../constants';
+import { useMutation, useApolloClient } from "@apollo/client";
+import { AUTH_TOKEN, USE_AUTH_TOKEN } from "../constants";
+import { TOPICS_QUERY, TOPICS_SET_STATE, TOPICS_SET_RESUBMITION } from "../queries/topic_queries";
 
-const TopicsList = ({useAuthtoken, onlyOpen, tempData, 
+const TopicsList = ({useAuthtoken, onlyOpen, topicsData, isNormalList,
                      memberOptions, priorityOptions, 
                      onTakeIt, onUp, onDown, onRowClick, 
                      onChangeTitle, onChangeMember, onChangePriority}) => {
@@ -12,47 +13,6 @@ const TopicsList = ({useAuthtoken, onlyOpen, tempData,
     const [ data, setData ] = useState(null);
     const [ loading, setLoading ] = useState(false);
     const [ error, setError ] = useState(false);
-
-    const TOPICS_QUERY = gql`
-        query getAllTopics {
-            topics {
-                id
-                title
-                priority_id
-                priority {
-                    id
-                    description
-                }
-                state_id
-                created
-                closed
-                resubmit_date
-                member_assigned
-                assigned_to_member {
-                    last_name 
-                    first_name
-                }
-            }
-        }
-    `;
-
-    const TOPICS_SET_STATE = gql`
-        mutation updateTopicState($id: ID!, $stateId: Int!) {
-            updateTopicState(id: $id, state_id: $stateId) {
-                id
-                state_id
-            } 
-        }
-    `;
-
-    const TOPICS_SET_RESUBMITION = gql`
-        mutation updateTopicResubmitDate($id: ID!, $resubmit_date: Date!) {
-            updateTopicResubmitDate(id: $id, resubmit_date: $resubmit_date) {
-                id
-                resubmit_date
-            } 
-        }
-    `;
 
     const loadTopicList = useCallback(() => {
         if (!loading) {
@@ -108,19 +68,17 @@ const TopicsList = ({useAuthtoken, onlyOpen, tempData,
             // Reset the loading state.
             setLoading(false);
         }
-    }, [TOPICS_QUERY, useAuthtoken, onlyOpen, client, loading]);
+    }, [useAuthtoken, onlyOpen, client, loading]);
 
     useEffect(() => { 
-        
-        if (typeof tempData === "undefined")
+        if (typeof topicsData === "undefined")
         {
             // load data
             loadTopicList();
         } else {
-            setData(tempData);
+            setData(topicsData);
         }
-    }, [tempData, loadTopicList]); 
-
+    }, [topicsData, loadTopicList]); 
 
     const [ setTopicState ]        = useMutation(TOPICS_SET_STATE);
     const [ setTopicResubmitDate ] = useMutation(TOPICS_SET_RESUBMITION);
@@ -132,14 +90,14 @@ const TopicsList = ({useAuthtoken, onlyOpen, tempData,
                 stateId: newStateId
             }
         });
-        let topicsData = data;
+        let tempTopicsData = data;
         // update data on this page from cache.
-        topicsData.topics.forEach((topic) => {
+        tempTopicsData.topics.forEach((topic) => {
             if (topic.id === topicId) {
                 topic.state_id = newStateId;
             }
         });
-        setData(topicsData);
+        setData(tempTopicsData);
     };
 
     const setResubmitDateInDB = (topicId, resubmitDate) => {
@@ -149,14 +107,14 @@ const TopicsList = ({useAuthtoken, onlyOpen, tempData,
                 resubmit_date: resubmitDate
             }
         });
-        let topicsData = data;
+        let tempTopicsData = data;
         // update data on this page from cache.
-        topicsData.topics.forEach((topic) => {
+        tempTopicsData.topics.forEach((topic) => {
             if (topic.id === topicId) {
                 topic.resubmit_date = resubmitDate;
             }
         });
-        setData(topicsData);
+        setData(tempTopicsData);
     };
 
     const clickRow = (topicId) => {
@@ -180,15 +138,15 @@ const TopicsList = ({useAuthtoken, onlyOpen, tempData,
 
     const clickTakeIt = (topicId) => {
         // update the flag of taken it
-        let topicsData = data;
-        topicsData.topics.forEach((topic) => {
+        let tempTopicsData = data;
+        tempTopicsData.topics.forEach((topic) => {
             if (topic.id === topicId) {
                 if (typeof onTakeIt !== "undefined")
                     onTakeIt(topic);
                 topic.used_protocol_id = 0;
             }
         })
-        setData(topicsData);
+        setData(tempTopicsData);
     }
 
     const clickUp = (topicId) => {
@@ -225,9 +183,10 @@ const TopicsList = ({useAuthtoken, onlyOpen, tempData,
         return <>loading...</>
     } else {
         let onlyShowData = typeof onRowClick != "undefined";
+        console.log(data.topics);
         return data.topics.map((topic) =>
             <React.Fragment key={topic.internalId}>
-                { typeof tempData === "undefined"
+                { typeof topicsData === "undefined" || isNormalList
                     ?   <div>
                             {useAuthtoken 
                                 ?   <div className="resubmission agenda-date">
@@ -235,23 +194,26 @@ const TopicsList = ({useAuthtoken, onlyOpen, tempData,
                                           topic.resubmit_date.substring(5,7) + "." + 
                                           topic.resubmit_date.substring(0,4)}
                                     </div>
-                                :   <DatePicker
-                                        className="resubmission agenda-date"
-                                        closeOnScroll={true}
-                                        dateFormat="dd.MM.yyyy"
-                                        locale="de"
-                                        name="startDate"
-                                        onClick={() => clickRow(topic.id)}
-                                        onChange={(date) => setResubmitDateInDB(topic.id, date)}
-                                        selected={Date.parse(topic.resubmit_date)}
-                                        showWeekNumbers={true}
-                                        todayButton="Heute"
-                                    />
+                                :   topic.resubmit_date && Date.parse(topic.resubmit_date) === 0
+                                        ?   <div    className="resubmission agenda-history-date"
+                                                    onClick={() => clickRow(-1)}>Themenspeicher</div>
+                                        :   <DatePicker
+                                                className="resubmission agenda-date"
+                                                closeOnScroll={true}
+                                                dateFormat="dd.MM.yyyy"
+                                                locale="de"
+                                                name="startDate"
+                                                onClick={() => clickRow(topic.id)}
+                                                onChange={(date) => setResubmitDateInDB(topic.id, date)}
+                                                selected={Date.parse(topic.resubmit_date)}
+                                                showWeekNumbers={true}
+                                                todayButton="Heute"
+                                            />
                             }
                         </div>
                     :   <div className="agenda-order">{topic.order_text}</div>
                 }
-                { typeof tempData === "undefined"
+                { typeof topicsData === "undefined" || isNormalList
                     ?   null
                     :   topic.id > 0
                             ?   <div className="agenda-prio" onClick={() => clickRow(topic.id)}>{topic.priority.description}</div>
@@ -268,7 +230,8 @@ const TopicsList = ({useAuthtoken, onlyOpen, tempData,
                             title="klicken, um Historie anzuzeigen">{topic.title}</div>
                     :   <input  className="agenda-topic agenda-item"
                                 type="text" value={topic.title} 
-                                onChange={(obj) => changeTitle(topic.order, obj)}></input>
+                                onChange={(obj) => changeTitle(topic.order, obj)}
+                                onClick={() => clickRow(-1)} ></input>
                 }
                 {topic.id > 0
                     ?   topic.assigned_to_member
@@ -282,14 +245,15 @@ const TopicsList = ({useAuthtoken, onlyOpen, tempData,
                                         options={memberOptions} 
                                         selected_id={topic.member_assigned}
                                         onChange={(itemNumber) => changeMemberAssigned(topic.order, itemNumber)}
+                                        onClick={() => clickRow(-1)}
                                         withDefault={true} />
                         </div>
                 }
                 { onlyOpen 
                     ?   <button className={"doing agenda-button" + (topic.used_protocol_id !== -1 ? " checked" : "")}
-                                onClick={() => clickTakeIt(topic.id)} title="klicken, um diesen offenwn Agenda-Punkt ins Protokoll auzunehmen"></button>
+                                onClick={() => clickTakeIt(topic.id)} title="klicken, um diesen offenen Agenda-Punkt ins Protokoll auzunehmen"></button>
                     :   "order" in topic
-                            ?   topic.order > 1
+                            ?   topic.order > 1 && !isNormalList
                                     ?   <button className="up agenda-button checked"
                                                 onClick={() => clickUp(topic.internalId)} title='klicken, um nach oben zu bewegen'></button>
                                     :   <div></div>
@@ -300,7 +264,7 @@ const TopicsList = ({useAuthtoken, onlyOpen, tempData,
                 { onlyOpen 
                     ?   <div></div>
                     :   "order" in topic
-                            ?   topic.order < data.topics.length
+                            ?   topic.order < data.topics.length && !isNormalList
                                     ?   <button className="down agenda-button checked"
                                                 onClick={() => clickDown(topic.internalId)} 
                                                 title={onlyShowData ? "klicken, um Historie anzuzeigen" : 'klicken, um nach unten zu bewegen'}></button>

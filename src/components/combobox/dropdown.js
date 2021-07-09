@@ -5,7 +5,7 @@ import {
     StyledOption,
 } from "./styles.js";
 
-const Dropdown = ({name, title, options, selected_id, onChange, withDefault}) => {
+const Dropdown = ({name, title, options, selected_id, onChange, onClick, withDefault}) => {
 
     // the format of the options has to be JSON
     // [{ "id": 1, "value": "value 01"},{ "id": 2, "value": "value 02"}, etc]
@@ -25,9 +25,14 @@ const Dropdown = ({name, title, options, selected_id, onChange, withDefault}) =>
             onChange(element.target.selectedIndex);
     }
 
+    const handleClick = (element) => {
+        if (typeof onClick !== "undefined")
+            onClick(element.target);
+    }
+
     return (
         <>
-            <DropdownWrapper >
+            <DropdownWrapper onClick={(elem) => handleClick(elem)}>
                 <StyledSelect   id={name} name={name} title={title}
                                 value={typeof withDefault !== "undefined"
                                             ? selected_id === -1 

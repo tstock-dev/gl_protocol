@@ -223,7 +223,7 @@ h3.page-sub-header {
 
 .my-agenda-table {
   display: grid;
-  grid-template-columns: 25% 50% 25%;
+  grid-template-columns: 14% 68% 14%;
 }
 
 .new-agenda-table {
@@ -372,6 +372,12 @@ input .agenda-item {
   max-height: 29px;
   text-align: center;
   width: 12%;
+}
+
+.resubmission.agenda-history-date {
+  display: unset;
+  font-size: 12px;
+  padding-top: 5px;
 }
 
 .agenda-history-note {
